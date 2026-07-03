@@ -1,0 +1,1116 @@
+The Language of Logic in the Notation FOL-PRE: 
+From Natural Language to Formal Expressions 
+==============================================
+
+We describe the language of first-order logic (also called "first-order
+predicate logic" or just "predicate logic"). This language allows to denote
+values and to express statements about values. We describe this language both
+formally and informally, namely by giving formal expressions which we
+subsequently interpret in natural language. This also demonstrates how we can
+conversely translate statements in natural language to formal expressions.
+
+We give the formal expressions in a variant of "prefix notation" that we call
+"FOL-PRE". Whenever we refer in the following to "formal expressions", we mean
+"FOL-PRE" expressions.
+
+As an example, the formal expression
+
+  forall["x","A",imp[fun["p",var["x"]],exists["y","B",fun["q",var["x"],var["y"]]]]]
+  
+can be read as "for every value x of type A, if x satisfies property p, then
+there exists some value y of type B, such that x is in relation q to y".
+Likewise, the natural language statement "everybody loves somebody" can be
+written as the formal expression
+
+  forall["x","Person",exists["y","Person",fun["loves",var["x"],var["y"]]]]
+  
+which can be read in more detail as "for every person x, there exists some
+person y, such that x loves y".
+
+Types
+-----
+
+As shown above, formal expressions may refer to specific "types" of values,
+depending on the subject that is considered, e.g., a type "Person" of human
+beings. In biology, we may have a type "Animal" of animals and a type
+"Plant" of plants. In mathematics, we have types such as the type "N"
+("Nat") of the natural numbers, the type "AﾗB" ("A times B") of binary tuples
+whose components are from types "A" and "B", respectively, or the type "A?B"
+("A to B") of maps from some type "A" to some type "B". Thus types may be
+hierarchically constructed from simpler types, e.g., the type "Z?Z" of maps
+from integers to integers. In the programming language Java, we have for example
+the type "int" of machine integers, and the type "T[]" of arrays of elements
+from some type "T", e.g., the type "int[]" of integer arrays.
+
+In the following, we describe the structure of formal expressions in more
+detail. In the natural language description (but not in the formal expressions),
+we use double quotes (") to embed syntactic entities that should not be confused
+with the text of the description (we use single quotes (') if the syntactic
+entities themselves contain double quotes). For example, we refer by "a" to the
+first letter of the alphabet, not to the English indefinite article. We also use
+double quotes to introduce new notions to which we subsequently refer. For
+example, we refer by the new notion "meta-variable" to symbols that represent
+formal expressions and that can thus be substituted by formal expressions.
+
+Formal Expressions
+------------------
+
+A formal expression has one of following shapes:
+
+  "ID"
+  TAG[]
+  TAG[EXP]
+  TAG[EXP,EXP]
+  TAG[EXP,EXP,EXP]
+  ...
+
+Here the characters '"' (double quote) '[' (opening square bracket), ']'
+(closing square bracket), ',' (comma) stand for themselves. Whitespace
+within expressions can be ignored or removed (except for the contents of
+identifiers, see below).
+
+The meta-variable "ID" stands for an "identifier", a string of characters that
+is embedded in double quotes but does itself not contain double quotes.
+
+The meta-variable "TAG" stands for one of the following words (which we call
+"tags"):
+
+  var, fun, true, false, pred, not, and, or, imp, iff, forall, exists
+
+The meta-variable "EXP" stands for a formal expression. 
+
+If the description of the shape of a formal expression has multiple occurrences
+of the same meta-variable, these occurrences may stand for different formal
+expressions.
+
+Thus, in a nutshell, every formal expression either is an identifier embedded in
+double quotes or it starts with a tag and embeds within square brackets a
+comma-separated list of formal expressions, which we call the "sub-expressions"
+of the formal expression. The formal expression may have no sub-expression and
+it may have multiple (generally different) sub-expressions.
+  
+There are two distinct kinds of formal expressions, "terms" and "formulas",
+where terms describe values and formulas express statements (about values) that
+can be true or false. In the following, the meta-variable "TERM" stands for a
+term and the meta-variable "FORM" for a formula.
+
+Later we will also introduce another kind of formal expressions that we
+call "proof problems"; these give the context for the use of formulas.
+
+
+Terms
+-----
+
+There are the following kinds of terms:
+
+* A "variable" is a term of shape
+
+    var["ID"]
+    
+  where "ID" stands for the name of the variable. The value of the variable
+  is the value assigned to the name in the current context.
+  
+  For example, the term
+
+    var["x"]
+    
+  can be read as "variable x" or just "x"; here the identifier "x" is the name
+  of the variable. Names that start with letters from the end of the alphabet,
+  in particular "x", "y", "z", often (not always) denote variables.
+
+  If an identifier appears in a formula that binds this identifier by
+  a quantifier (see below), this identifier always is the name of a variable.
+  
+* A "constant" is a term of shape
+
+    fun["ID"]
+    
+  where "ID" stands for the name of the constant. The value of the constant
+  is the same in every context.
+  
+  For example, the term
+
+    fun["c"]
+    
+  can be read as "constant c" or just "c"; here the identifier "c" is the name
+  of the constant. Names that start with letters from the begin of the alphabet,
+  in particular "a", "b", "c", often (not always) denote constants.
+  
+  If an identifier appears in a formula that does not bind this identifier by a
+  quantifier (see below), this identifier is usually the name of a constant.
+  
+  Mathematical symbols such as "0", "1", "42", "p", or "e" are constant names.
+
+* A "function application" is a term of shape
+
+    fun["ID",TERM,...]
+    
+  where "ID" stands for the name of a "function" and "TERM,..." stands for a
+  comma-separated list of one or more terms. The value of the function
+  application is determined by the application of the denoted function to the
+  values of the argument terms in the current context.
+  
+  For example, the function application
+  
+    fun["f",var["x"]]
+    
+  (conventionally written as "f(x)") can be read as "the result of function f
+  applied to variable x" or shorter "f applied to x" or just "f of x"; here the
+  identifier "f" is the name of the function. Names that start with letters such
+  as "f", "g", "h", often (not always) denote functions.
+  
+  Function applications can have multiple arguments, e.g.,
+  
+    fun["g",var["x"],fun["1"]]
+    
+  (conventionally written as "g(x,1)") can be read as "g applied to x and one".
+  
+  Usually a function must be always applied to the same number of arguments.
+  This number is called the "arity" of the function; we call functions with one
+  argument "unary" and functions with two arguments "binary". A constant (see
+  above) is just a function with arity zero.
+
+  For example, given above application of binary function "g", there must not be
+  another application
+  
+    fun["g",var["y"]]
+    
+  of this function with just one argument. However, sometimes a name is also
+  "overloaded" to denote different functions with different arity, see the
+  example of function "-" below.
+  
+  Function applications can be nested, e.g., the term
+  
+    fun["g",var["y"],fun["f",var["x"],fun["y"]]]
+    
+  (conventionally written as "g(y,f(x,y)") can be read as "g applied to y and to
+  the result of the application of f to x and y".
+    
+  Mathematical symbols such as "+" (addition, "plus"), "-" (subtraction,
+  "minus"), "*" (multiplication, "times"), and "/" (division, "divided by") are
+  the names of binary functions, e.g., the term
+  
+    fun["+",var["x"],var["y"]]
+  
+  (conventionally written in infix form as "x+y") can be read as "the addition
+  of x and y" or shorter "x plus y".
+  
+  The symbol "-" is overloaded to also denote the unary function "negation",
+  thus the term
+  
+    fun["-",var["x"]]
+    
+  (conventionally written as "-x") can be read as "minus x".
+  
+  Other unary functions are denoted by the names "sqrt" (square root), "exp"
+  (exponential), "log" (logarithm with basis 10), "ln" (natural logarithm),
+  "sin" (sine), "cos"(cosine), "tan" (tangent), "cot" (cotangent).
+  
+  Be careful: a natural language phrase such as "x times x plus one" does
+  not uniquely identify a term. One interpretation of this phrase is the term
+  
+    fun["*",var["x"],fun["+",var["x"],fun["1"]]]
+    
+  (conventionally written in infix form as "x*(x+1)"), which can be more
+  accurately read as "x times the sum of x and one".
+  
+  However, another interpretation of the same phrase is the term
+
+    fun[fun["+,fun["*",var["x"],var["x"]]],fun["1"]]
+     
+  written in infix form written as "(x*x)+1" or (considering the usual
+  convention that "*" binds stronger than "+") just as "x*x+1"; this can be more
+  accurately read as "the result of multiplying x with x and then adding one".
+
+  If in doubt, better ask for clarification before attempting formalize an
+  ambiguous phrase as a term.
+    
+Further examples of natural language phrases that denote terms are:
+
+* The phrase "she":
+
+    var["she"]
+    
+  Here "she" is the name of a variable (denoting an unspecific person).
+    
+* The phrase "Mary":
+
+    fun["Mary"]
+   
+  Here "Mary" is the name of a constant (denoting a specific person).
+  
+* The phrase "her children":
+
+    fun["children",var["she"]]
+
+  Here "children" is the name of a unary function that, when applied to
+  a person, returns the set of all children of that person.
+  
+* The phrase "the children of her and Joe":
+
+    fun["children",var["she"],fun["Joe"]]
+  
+  Here "children" is the name of a binary function that, when applied to
+  two persons, returns the set of all children that these persons have together.
+  
+Be careful: a phrase can be only translated to a term, if the described value
+is guaranteed to exist and to be unique. For instance, the phrase "her child" can
+NOT be translated into the term
+
+   fun["child",var["she"]]
+   
+because the person denoted by "she" might have no child at all or might have
+multiple children. Here a formalization by a predicate "ischild" rather than by
+a function "child" is more appropriate (see below).
+
+Formulas
+--------
+
+There are the following kinds of formulas:
+
+* A "truth literal" is a formula of one of these shapes:
+
+    true[]
+    false[]
+    
+  The formula "true[]" is always (in any context) true; the formula 
+  "false[]" is always false.
+  
+* An "atomic formula" is a formula of one of the shapes
+
+    pred["ID"]
+    pred["ID",TERM,...]
+
+  where "ID" stands for the name of a "predicate" and "TERM,..." stands for a
+  comma-separated list of one or more terms. In the first case, the truth value
+  of the atomic formula is the same in every context. In the second case, the
+  truth value is determined by the application of the denoted predicate to the
+  values of the argument terms in the current context.
+  
+  The atomic formula
+  
+    pred["p",var["x"]]
+    
+  (conventionally written as "p(x)") can be read as "predicate p holds for variable x"
+  or just "p holds for x" or "x satisfies p"; here the identifier "p" is the
+  name of the predicate. Names that start with letters such as "p", "q", "r",
+  often (not always) denote predicates.
+  
+  Atomic formulas can have no arguments, e.g.,
+  
+    pred["q"]
+    
+  (conventionally written as "q") can be read as "q holds".
+  
+  Atomic formulas can have multiple arguments, e.g.,
+  
+    pred["r",var["x"],fun["1"]]
+    
+  (conventionally written as "r(x,1)") can be read as "r holds for x and one" or
+  "x is in relation r to one".
+ 
+  Like a function, usually a predicate must be always applied to the same number
+  of arguments, the "arity" of the predicate. A predicate of arity two or more
+  is also called a "relation".
+  
+  Mathematical symbols such as "=" (equal), "?" (not equal), "<" (less than),
+  "=" (less than or equal), ">" (greater than), "=" (greater equal), "|"
+  (divides) are binary relations. For example, the atomic formula
+  
+    pred["=",var["x"],fun["1"]]
+    
+  (conventionally written in infix form "x=1") can be read as "x is less than or
+  equal to one".
+  
+  Atomic formulas can have multiple arguments, e.g.,
+  
+    pred["<",var["x"],fun["1"]]
+    
+  (conventionally written in infix form as "x<1") can be read as "x is less than
+  one".
+  
+  Atomic formulas can have nested terms as arguments, e.g., the term
+  
+    pred["<",var["x"],fun["+",var["x"],fun["1"]]]
+    
+  (conventionally written in infix form as "x<x+1"), can be read as "x is less
+  than x+1".
+  
+  Be careful: an atomic formula can NOT have another atomic formula as an
+  argument; therefore the following phrase is ill-formed:
+  
+    pred["<",var["x"],pred["<",var["x"],fun["1"]]]
+    
+  In an atomic formula with "pred["p",var["y"],var["x"]] with binary predicate "p",
+  for a given value of "x" there may exist no, one, or more values of "y" that
+  make the formula true (and vice versa). Therefore, an atomic formula
+  
+    pred["ischild",var["they"],var["she"]]
+    
+  read as "they is her child" makes sense if "she" has no child (then the formula
+  is always false), exactly one child (then the formula is only true for a
+  single value of "they"), or multiple children (then the formula is true for
+  multiple values of "they"). This can be used to talk about "her children"
+  with the help of quantified formulas (see below).
+
+* A "negation" is a formula of shape
+
+    not[FORM]
+    
+  where "FORM" stands for the single sub-formula of the negation; the negation
+  is true if and only if the sub-formula is false. Hence the negation is false
+  if and only if the sub-formula is true.
+  
+  The negation
+  
+    not[pred["p"]]
+    
+  (conventionally written as "ｬp") can be read as "it is not the case that p
+  holds" or shorter "p does not hold" or even shorter "not p".
+  
+  As another example, the negation
+  
+    not[pred["<",fun["+",var["x"],fun["1"]],var["x"]]
+    
+  (conventionally written as "ｬ x+1<x") can be read "x plus 1 is not less than
+  x".
+  
+* A "conjunction" is a formula of shape
+
+    and[FORM,FORM]
+    
+  where "FORM,FORM" stands for the two comma-separated sub-formulas of the
+  conjunction. The conjunction is true if and only if both sub-formulas are
+  true. Hence the conjunction is false if and only if at least one of the
+  sub-formulas is false.
+  
+  The conjunction
+  
+    and[pred["p"],pred["q"]]
+  
+  (conventionally written in the infix form "p ? q") can be read as "it is both
+  true that p holds and that q holds" or shorter "p holds and q holds" or even
+  shorter "p and q".
+  
+  For example, the conjunction
+  
+    and[pred["=",var["x"],var["y"]],pred["=",var["y"],var["z"]]]
+    
+  (conventionally written in the infix form "x=y ? y=z") can be read as "x
+  equals y and y is less than or equal z".
+  
+* A "disjunction" is a formula of shape
+
+    or[FORM,FORM]
+    
+  where "FORM,FORM" stands for the two comma-separated sub-formulas of the
+  disjunction. The disjunction is true and only if at least one of the
+  sub-formulas is true (i.e., one of the subformulas or both). Hence the
+  disjunction is false if and only if both sub-formulas are false.
+  
+  The disjunction
+  
+    or[pred["p"],pred["q"]]
+  
+  (conventionally written in the infix form "p ? q") can be read as "at least
+  one of the two is true, that p holds or that q holds" or shorter "p holds or q
+  holds (or both)" or even shorter "p holds or q holds" or even just "p or q".
+
+  For example, the disjunction
+  
+    or[pred["<",var["x"],var["y"]],pred["<",var["y"],var["x"]]]
+    
+  (conventionally written in the infix form "x<y ? y<x") can be read as "x is
+  less than y or y is less than x".
+  
+  Be careful: a statement like "either p holds or q holds" (note the word
+  "either") has to be written as the formula
+  
+    or[and[pred["p"],not[pred["q"]]],and[not[pred["p"]],pred["q"]]]
+  
+  (conventionally written as "(p ? ｬq) ? (ｬp ? q)"), because the formulation
+  indicates that exactly one of the sub-statements is true, i.e., the first one
+  is true and the second one is false or vice versa.
+ 
+* An "implication" is a formula of shape
+
+    imp[FORM,FORM]
+    
+  where "FORM,FORM" stands for the two comma-separated sub-formulas of the
+  implication. The implication is true if and only if the first sub-formula
+  (called "premise") is false or the second-subformula (called "conclusion") is
+  true. Hence the implication is false if and only if the premise is true and
+  the conclusion is false.
+  
+  The implication
+  
+    imp[pred["p"],pred["q"]]
+  
+  (conventionally written in the infix form "p ? q") can be read as "if p holds,
+  then q holds" or shorter "if p then q" or "p is sufficient for q" or "p
+  implies q".
+
+  For example, the implication
+  
+    imp[pred["<",var["x"],var["y"]],pred["=",var["x"],var["y"]]]
+  
+  (conventionally written in the infix form "x<y ? x=y") can be read as "if x is
+  less than y, then x is less than or equal y".
+  
+* An "equivalence" is a formula of shape
+
+    iff[FORM,FORM]
+    
+  where "FORM,FORM" stands for the two comma-separated sub-formulas of the
+  implication. The equivalence is true if and only if both sub-formulas are true
+  or both are false. Hence the equivalence is false if and only if one
+  sub-formula is true and the other one is false.
+  
+  The equivalence
+  
+    iff[pred["p"],pred["q"]] 
+    
+  (conventionally written in the infix form "p ? q") can be read as "p holds if
+  and only if q holds", "if p holds, then q holds, and vice versa", or "p is
+  necessary and sufficient for q", or shorter "p if and only if q" or "p is
+  equivalent to q".
+  
+  For example, the equivalence
+  
+    iff[pred["<",var["x"],var["y"]],pred["<",fun["-",var["y"]],fun["-",var["x"]]]]
+    
+  (conventionally written in the infix form "x < y ? -y < -x") can be read as "x
+  is less than y if and only if minus y is less than minus x".
+
+* A "forall formula" (more formally: "universal formula" or "universally
+  quantified formula") is a formula of shape
+
+    forall["ID","ID",FORM]
+    
+  where the tag "forall" is the "universal quantifier" read as "for all" or "for
+  every" or just "all" or "every". Here the first occurrence of "ID" denotes the
+  name of a variable (we call this variable "bound" or "quantified" by the
+  quantifier) and the second occurrence of "ID" denotes the type of the
+  variable; "FORM" is the sub-formula (also called "body") of the universal
+  formula. The universal formula is true if and only if for every value of the
+  denoted type it is the case that, if we set the variable to this value, the
+  body is true (in the new context with the variable set to the value). Hence
+  the forall formula is false if and only if for no value of the denoted type
+  the body is false.
+  
+  The universal formula
+  
+    forall["x","D",pred["p",var["x"]]]
+    
+  (conventionally written as "?x?D.p(x)") can be read as "for all x in D, x
+  satisfies p" or "for every x in D, x satisfies p" or "all x in D satisfy p" or
+  "every x in D satisfies p"). The quantification may also be stated at the end
+  of the sentence, e.g., "x satisfies p, for all x in D".
+  
+  Rather than saying "x in D", we may also say "D-value x"; therefore above
+  formula may be also read as "every D-value x satisfies p" or even shorter
+  (since "x" is not referenced in the rest of the sentence) "every D-value
+  satisfies p".
+
+  For example, the universal formula
+  
+    forall["x","Z",imp[pred[">",var["x"],fun["0"]],
+                       pred[">=",fun["-",var["x"],fun["1"]],fun["0]"]
+    
+  (conventionally written as "?x?Z. x>0 ? x-1=0") can be read as "for every
+  integer x, if x is greater than zero, then x minus one is greater equal zero"
+  (please note that we can say "every integer x" or "every integer number x"
+  rather than "every x in Z").
+
+  As another example, the universal formula
+  
+    forall["x","Person",imp[ischild["x","Mary"],plays["x"]]]
+    
+  states "for every person x, it is the case, that if x is Mary's child, then x
+  plays" or shorter "all of Mary's children play" or even shorter "Mary's
+  children play".
+  
+* An "exists formula" (more formally: "existential formula" or "existentially
+  quantified formula") is a formula of shape
+
+    exists["ID","ID",FORM]
+    
+  where the tag "exists" is the "existential quantifier" read as "there exists
+  some" or "there is some" or "for some" or just "some" (instead of "some" we
+  may also use the indefinite article "a" or "an"). The first occurrence of "ID"
+  denotes the name of a variable (we call this variable "bound" or "quantified"
+  by the quantifier) and the second occurrence of "ID" denotes the type of the
+  variable; "FORM" is the sub-formula (also called "body") of the existential
+  formula. The existential formula is true if and only if for at least one value of
+  the denoted type it is the case that, if we set the variable to this value,
+  the body is true (in the new context with the variable set to the value).
+  Hence the exists formula is false if and only if for every value of the
+  denoted type the body is false.
+  
+  The existential formula
+  
+    exists["x","D",pred["p",var["x"]]]
+    
+  (conventionally written as "?x?D.p(x)") can be read as "there exists an x in D
+  such that x satisfies p" or "there exists some x in D that satisfies p" or
+  "some x in D satisfies p" or also "x satisfies p, for some x in D". We might
+  also say "there is some D-value x that satisfies p" or "x satisfies p, for
+  some D-value x". The shortest formulations would be "some D-value x satisfies
+  p" or (since "x" is not referenced in the rest of the sentence) "some D-value
+  satisfies p".
+
+  For example, the formula
+  
+    exists["x","Person",and[ischild["x","Mary"],plays["x"]]]
+    
+  states "for some person x, it is the case that x is Mary's child and x plays"
+  or "some person x that is a child of Mary plays" or shorter "some child of
+  Mary plays" or just "a child of Mary plays".
+  
+  We may have nested quantified formulas; e.g., the existential formula
+    
+    exists["x","Z",forall["y","Z",pred[">",var["x"],var["y"]]]]
+    
+  (conventionally written as "?x?Z.?y?Z.x>y") embeds a universal formula. The
+  whole formula can be read as "there is an integer x such that, for every
+  integer y, x is greater than y" or shorter "there is an integer x that is
+  greater than every integer y" or even shorter "some integer x is greater than
+  every integer y" or even "some integer is greater than every integer". This is
+  apparently a false statement: for every integer "x" that could be a candidate,
+  we can set the integer "y" to "x" itself; then "x" is not greater than "y".
+
+  The order of quantified variables matters. For instance, by swapping in above
+  formula the existentially quantified variable "x" and the universally
+  quantified variable "y", we get the formula
+  
+     forall["y","Z",exists["x","Z",pred[">",var["x"],var["y"]]]]
+    
+  (conventionally written as "?y?Z.?x?Z.x>y") which can be read as "for every
+  integer y there is an integer x greater than y" or shorter "for every integer
+  there is a greater integer". This is apparently a true statement: for every
+  integer "y" we can set "x" to "y+1"; then "x" is greater than "y". Thus both
+  formulas above have different truth values.
+  
+The formula tags "not", "and", "or", "imp" and "iff" are called "logical
+connectives", since they connect formulas to bigger formulas; the formula tags
+"forall" and "exists" are called "quantifiers" because they specify how many
+values of the variable satisfy the formula body. Quantifiers are also called
+"binders" because they bind the variables in a formula, unbound variables are
+also called "free". 
+
+Free and Bound Variables
+------------------------
+
+The truth value of a formula only depends on the values assigned to the free
+variables of the formula; for instance, the truth value of the formula
+
+  forall["y","N",pred["=","x","y"]]
+  
+(conventionally written as "?y?N.x=y") which we can read as "x is less or equal
+every natural number y" depends on the value assigned to the free variable "x":
+if we set "x" to 0, the formula is true, but it is false for every positive
+natural number assigned to "x".
+
+Variables bound in a formula can be renamed without affecting the truth value of
+the formula. For instance, if we rename in above formula the bound variable "y"
+to "z", the truth value of the resulting formula
+
+  forall["z","N",pred["=","x","z"]]
+  
+(conventionally written as "?z?N.x=z") is, for every value of "x", the same as
+the truth value of the original formula.
+
+Therefore the names of bound variables do not matter and may be arbitrarily
+changed; however, the names of free variables must remain as given.
+
+A formula without free variables is called "closed"; closed formulas are
+formulas whose truth value is independent of the values of any variable in the
+context of the formulas. For instance, the closed formula
+
+  forall["x","N",pred["=","x","x"]]
+
+(conventionally written as "?x?Nat.x=x") which can be read "every natural number
+x is less than or equal x", is unconditionally true.
+
+Typically "top-level formulas", i.e., formulas that do not occur as subformulas
+of other formulas, are closed. Natural language statements with free variables
+are often considered as "implicitly closed" by adopting the convention that each
+free variable is universally quantified. For instance, the natural number law "x
+is less than or equal x", actually means that this statement is true for every
+possible value of the free variable "x"; thus the law must be actually expressed
+by the universal formula above.
+
+Formal Definitions
+------------------
+
+Universally quantified closed formulas are often used as "definitions", i.e.,
+they uniquely describe the values of (newly introduced) functions and the truth
+values of (newly introduced) predicates, respectively.
+
+A statement like "the square of a real number x is x times x" usually (if the
+phrase "square" has not been mentioned before) introduces a new unary
+function "square" and uniquely defines its value by a universally quantified
+equality. For this, we assume that denotes the binary predicate "=", is
+available on every type and always indicate "equality" with its usual
+properties. Then, above statement can be expressed by the formula
+
+ forall["x","R",pred["=",fun["square",var["x"]],pred["*",var["x"],var["x"]]]]
+  
+(conventionally written as "?x?R.square(x)=x*x") which can be read in more
+detail as "for every real number x, the square of x is x times x". Please note
+that here the formulation "a real number x" does not indicate a statement about
+a specific value "x", but a statement about every possible value "x" which
+characterizes the function "square".
+
+Likewise, a statement like "a tomcat is a male cat" usually (if the phrase
+"tomcat" has not been mentioned before) introduces a new unary predicate
+"tomcat" and defines its truth value by a universally quantified equivalence.
+For instance, assuming the type "Animal" of animals, above statement can be
+expressed by the formula
+
+  forall[x,"Animal",iff[pred["tomcat",var["x"]],
+    and[pred["cat",var["x"]],pred["male",var["x"]]]]]
+    
+(conventionally written as "?x?Animal.tomcat(x)?cat(x)?male(x)") which
+can be read in more detail as "for every animal x it is the case that x is a
+tomcat if and only if x is a cat and x is male".
+
+The question whether a definition introduces a function or a predicate has to be
+answered by considering whether the newly introduced notion uniquely constructs
+a value from given values ("is x times x") or describes a property of a value
+("is a male cat"), a relationship with other values ("is a child of ...").
+
+The Ambiguity of Natural Language
+---------------------------------
+
+Please note that natural language statements often do not uniquely describe the
+structure of formulas with respect to the nesting of logical connectives or
+quantifiers. For instance, the statement "not p or q" can be interpreted as any
+of these two formulas:
+
+  or[not[pred["p"]],pred["q"]]
+  not[or[pred["p"],pred["q"]]]
+  
+If we use in formal logic the infix notation "ｬ p ? q", usually the first
+interpretation is intended ("(ｬ p) ? q") and not the second one ("ｬ(p ? q)").
+This is because the logical connective "not" is typically assumed to bind
+stronger than "or", i.e., the disjunction embeds the negation and not the other
+way round. However, in natural language one cannot really rely on this
+convention; therefore natural statements should provide verbal or typographic
+clues that indicate the intended formula structure. For instance, if we state
+
+  "at least one of the following two holds: 'not p' or 'q'"
+  
+or use itemization to indicate
+
+  We have
+  * not p or
+  * q.
+ 
+it becomes clear that the first formula above is intended. However if we state
+"it is not the case that p or q holds" or
+
+  We have not
+  * p or
+  * q.
+  
+it becomes clear the the second formula above is intended.
+
+Likewise, the statement "p and q or r" can be interpreted as any of these
+two formulas:
+
+  and[pred["p"],or[pred["q"],pred["r"]]]
+  or[and[pred["p"],pred["q"]],pred["r"]]
+  
+If we use in formal logic the infix notation "p ? q ? r", usually not the first
+formula is intended ("p ? (q ? r)") but the second one ("(p ? q) ? r)"). This
+is, because we typically assume that the logical connective "and" binds stronger
+than "or", i.e., the "or" formula embeds the "and" formula and not the other way
+round. However, in natural language we cannot rely on this convention but should
+give extra clues. Clearly, the first formula is intended if we write "it is the
+case that p holds and that q or r holds" or if we use this itemized form:
+
+  We have
+  * p and
+  * also
+    - q or
+    - r.
+    
+On the other hand, the second formula is intended if write "p and q holds or r
+holds" or use this itemized form:
+
+  At least one of the following holds:
+  * The property:
+    - p and
+    - q.
+  * The property r.
+    
+Similarly the structure of quantified formulas arising from natural language
+statements is ambiguous, because the scope of the quantifier is not clearly
+delimited. If we state "for every object x, if x satisfies p, then there exists
+some object y such that y is in relation p to x", this may be interpreted as any
+of these two formulas
+ 
+  forall["x","Object",imp[pred["p",var["x"]],
+    exists["y","Object",pred["q",var["y"],var["x"]]]]]
+  imp[forall["x","Object",pred["p",var["x"]]],
+    exists["y","Object",pred["q",var["y"],var["x"]]]]
+
+(conventionally written with parentheses to indicate the scope of the universal
+quantifiers as "?x?Object.(p(x)??y?Object.q(y,x))" or as
+"(?x?Object.p(x))??y?Object.q(y,x)", respectively).
+
+Here likely the first interpretation is intended, for two reasons:
+
+  * Unless explicitly indicated otherwise, a quantifier is assumed to bind
+    weaker than any logical connective, i.e. the scope of of a quantifier is as
+    large as possible (it reaches to the end of the formula).
+  
+  * The first formula is closed (the "forall" formula binds the variable "x" 
+    that is referenced in the existential formula) while the second one
+    has free variable "x".
+    
+If we reformulate above statement is "for every object x the following is the
+case: if x satisfies p, then there exists some object y such that y is in
+relation p to x", due to the clearer separation of the quantification prefix
+from the rest of the formula, it becomes clear that indeed the first
+interpretation is meant. To use the second interpretation, we would have to say
+something like: "if it is the case that every object x satisfies p, then it is
+also the case that there exists some object y such that y is in relation q to
+x", which clearly separates the premise of the implication from its conclusion.
+
+A Step-by-Step Translation
+--------------------------
+
+When translating a natural language statement into a formula, one should proceed
+from the outside to the inside, i.e., deduce first the top-level structure of
+the formula and then deduce the structure of the sub-formulas, until reaching
+the level of atomic formulas. Then the formalization process proceeds to deduce
+the structure of the argument terms of the atomic formulas until the level of
+variables and constants is reached.
+
+We now give a bigger example where we demonstrate the translation process
+step-by-step. Our goal is to formulate this zoological statement:
+
+  "A mule is an offspring of a donkey and a horse; mules are infertile"
+  
+We first investigate the domain of this statement and realize that it talks
+about different kinds of animals. Therefore we introduce a type "Animal" of
+all animals; this can be later used in references to specific animals, namely
+mules, donkeys, and horses. For these, we assume unary predicates "mule",
+"donkey", and "horse", such that, e.g., the atomic formula
+
+  pred["mule",var["x"]]
+  
+states "x is a mule". Furthermore, we assume a predicate "offspring" of arity
+three such that, e.g., the atomic formula
+
+  pred["offspring",var["x"],var["y"],var["z"]]
+  
+states "x is the offspring of y and z". Finally, we realize that the property
+"infertile" is just the negation of the property "fertile"; therefore, we also
+assume a unary predicate "fertile".
+
+Next we see that the whole statement is actually a conjunction of two statements
+that can be formalized by a formula of shape
+
+  and[P,Q]
+  
+where the sub-formula "P" represents the statement "A mule is an offspring of a
+donkey and a horse" and "Q" represents the statement "mules are infertile".
+
+Staring with the simpler statement "Q", we realize that it can be more
+accurately expressed as "Every mule is infertile", or (since mules are just
+specific kinds of animals) "for every animal it is the case, that if the animal
+is a mule, then the animal is infertile", or even in more detail, "for every
+animal x, it is the case that, if x is a mule, then x is infertile". Thus "Q"
+can be represented by a formula of shape
+
+  forall["x","Animal",imp[Q1,Q2]]
+
+where sub-formula "Q1" represents "x is a mule" and sub-formula "Q2" represents
+"x is infertile". The property "is a mule" can be represented by the predicate
+"mule" and thus formula "Q1" can be ultimately written as follows:
+
+  pred["mule",var["x"]]
+
+The sub-formula "Q2" represents "x is infertile" which is just the negation of
+"x is fertile". Thus "Q2" can be written as follows:
+
+  not[pred["fertile",var["x"]]]
+  
+Back-substituting these sub-formulas into "Q", we get the formula
+
+  forall["x","Animal",
+    imp[pred["mule",var["x"]],not[pred["fertile",var["x"]]]]]
+
+As for for the statement "P" saying "A mule is an offspring of a donkey and a
+horse", we realize that this statement is a zoological definition which does
+does not talk about a specific mule, but about every mule and should be
+therefore more accurately formulated as "Every mule is an offspring of a donkey
+and a horse", or even more accurately "Every animal is a mule if and only if it
+is an offspring of a donkey and a horse" or in even more detail "For every
+animal x, it is the case that x is a mule if and only if it is an offspring of a
+donkey and a horse".
+
+This later statement can be formulated by a formula of shape
+
+  forall[x,"Animal",iff[P1,P2]]
+  
+where "P1" states "x is a mule" and "P2" states "x is an offspring of donkey and
+a horse".
+
+It is now easy to write "P1" as this atomic formula:
+
+  pred["mule",var["x"]]
+  
+As for "P2", this can be more accurately stated as "x is an offspring of some
+donkey and some horse" or "there is some animal y such that y is a donkey
+and there is some animal z such that z is a horse and x is an offspring of
+y and z". This can be formulated as
+
+  exists["y","Animal",and[donkey["y"],P3]]
+  
+where "P3" is the statement "there is some animal z such that z is a horse and x
+is an offspring of y and z". This can be refined to this formula:
+
+  exists["z","Animal",and[horse["z",P4]]]
+  
+Please note that we need here a new variable "y" (because "x" is already used in
+the current formula) and a new variable "z" (because "x" and "y" are used);
+therefore "x", "y", and "z" stand for the three animals that we consider in this
+context: the mule and its parents, the donkey and the horse.
+  
+Now P4 stands for "x is an offspring of y and z" which can be written
+as this atomic formula:
+
+  pred["offspring","x",y","z"]
+  
+Back-substituting these sub-formulas into "P", we get this formula:
+
+  forall[x,"Animal",iff[pred["mule",var["x"]],
+    exists["y","Animal",and[donkey["y"],
+      exists["z","Animal",and[horse["z",pred["offspring","x",y","z"]]]]]]]]
+      
+Back-Substituting the formulas "P" and "Q" into "and[P,Q]", we get the formula
+
+  and[
+    forall[x,"Animal",iff[pred["mule",var["x"]],
+      exists["y","Animal",and[donkey["y"],
+        exists["z","Animal",and[horse["z",pred["offspring","x",y","z"]]]]]]]],
+    forall["x","Animal",
+      imp[pred["mule",var["x"]],not[pred["fertile",var["x"]]]]]]
+   
+which represents the full statement "A mule is an offspring of a donkey and
+a horse; mules are infertile".
+
+Proof Problems
+--------------
+
+We are mainly interested in establishing the truth ("proving") of certain
+formulas (the "goals") in a context that consists of given functions and
+predicates and other formulas (the "axioms") that are assumed to be true.
+To describe such a context, we use an expression of one of these shapes:
+
+  problem["ID",DECL]
+  problem["ID",DECL,DECL]
+  problem["ID",DECL,DECL,DECL]
+  ...
+  
+Here "ID" denotes the name of the proof problem (which has no formal role
+but can be used to refer to the problem). Furthermore, "DECL" stands for any
+of the following kinds of "declarations":
+
+* A "type declaration" is an expression of shape
+
+    typedecl["ID"]
+    
+  where "ID" denotes the name of a type that may be subsequently used in the
+  proof problem.
+  
+  For instance, the type declarations
+  
+    typedecl["N"]
+    typedecl["Person"]
+    
+  introduce a type "N" (the type of "natural numbers") and the type "Person" 
+  (the type of "persons"), respectively.
+  
+* A "constant declaration" is an expression of shape
+
+    fundecl["ID","ID"]
+    
+  where the first occurrence of "ID" denotes the name of a constant that may be
+  subsequently used in the proof problem; the second occurrence of "ID"
+  denotes its type.
+  
+  For instance, the constant declarations
+  
+    fundecl["0","N"]
+    fundecl["Tom","Person"]
+    
+  (coventionally written as "0:N" and "Tom:Person") introduce a constant
+  "0" of type "N" ("the natural number 0") and a constant "Tom" of type
+  "Person" ("the person Tom"), respectively.
+  
+* A "function declaration" is an expression of one of the shapes
+
+    fundecl["ID","ID","ID"]
+    fundecl["ID","ID","ID","ID"]
+    ...
+    
+  where the first occurrence of "ID" denotes the name of a function of some
+  arity "n=1" that may be subsequently used in the proof problem. The other
+  "n+1" occurrences denotes its "signature": the first "n" occurrences denote
+  the types of the "n" function arguments and the last occurrence denotes the
+  type of the function result.
+  
+  For instance, the function declarations
+  
+    fundecl["+","N","N","N"]
+    fundecl["mother","Person","Person"]
+    
+  (coventionally written as "+:NﾗN?N" and "mother:Person?Person") introduce a
+  binary function "+" on "N" (the "addition of natural numbers") and a unary
+  function "mother" on "Person" (the "mother of a person"), respectively.
+  
+  A constant declaration (see above) is just a function declaration with arity
+  zero.
+  
+* A "predicate declaration" is an expression of one of the shapes
+
+    preddecl["ID"]
+    preddecl["ID","ID"]
+    ...
+  
+  where the first occurrence of "ID" denotes the name of a predicate of some
+  arity "n=0" that may be subsequently used in the proof problem. The other "n"
+  occurrences denotes its "signature", i.e., the types of the "n" predicate
+  arguments.
+  
+  For instance, the predicate declarations
+  
+    preddecl["=","N","N"]
+    preddecl["female","Person"]
+  
+  introduce a binary predicate "=" on "N" (the "is less than equal" predicate on
+  natural numbers) and a unary predicate female" on "Person" (the "is female"
+  predicate on persons), respectively.
+  
+* An "axiom declaration" is an expression of shape
+
+    axiom["ID", FORM]
+    
+  where "ID" denotes the name of the axiom and "FORM" is a closed formula that
+  represents the content of the axiom; in this formula only those constants,
+  functions, and predicates may occurr that have been introduced in previous
+  declarations of the proof problem.
+  
+  Please note that the axiom formula is closed, i.e., it does not have
+  free variables.
+  
+  An axiom declaration states that, in the context of the current proof problem,
+  the denoted formula is assumed to be true. The name "ID" does not play any
+  formal role in the proof problem but may used on the meta-level to refer
+  to this formula.
+  
+  For instance, the axiom declarations
+  
+    axiom["0IsSmallest", forall["x","Nat",pred["=",fun["0"],var["x"]]]]
+    axiom["tomIsNotFemale", not[pred["female",fun["Tom"]]]]
+
+  introduce an axiom "0IsSmallest" (which states that "0" is the smallest
+  natural number) and an axiom "tomIsNotFemale" (which states that "Tom" is not
+  female), respectively.
+  
+* A "goal declaration" is an expression of shape
+
+    goal["ID", FORM]
+    
+  where "ID" denotes the name of the goal and "FORM" is a closed formula that
+  represents the content of the goal; in this formula only those constants,
+  functions, and predicates may occurr that have been introduced in previous
+  declarations of the proof problem.
+  
+  Please note that the goal formula is closed, i.e., it does not have free
+  variables.
+  
+  An goal declaration states that we want to show that, in the context of the
+  current proof problem, i.e., under the assumption that the formulas in all
+  previously declared axioms are true, the denoted formula is true. The name
+  "ID" does not play any formal role in the proof problem but may used on the
+  meta-level to refer to this formula.
+  
+  Please note that for a goal only the previously declared axioms are relevant,
+  not those that are declared after the goal.
+
+  For instance, the goal declarations
+  
+    goal["0IsNotASuccessor", 
+      forall["x","Nat",
+        not[pred["=",fun["0"],fun["+",var["x"],fun["1"]]]]]]
+    goal["NotOwnMother",
+      forall["x","Person",not[pred["mother",var["x"],var["x"]]]]]
+      
+  introduce an axiom "0IsNotASuccessor" (which states that "0" is not
+  the successor of any natural number) and the axiom "NotOwnMother"
+  (which states that no one is their own mother), respectively.
+
+In order to construct a proof problem, one has to first determine the
+necessary types, constants, functions, and predicates that are relevant
+for the proof problem, and construct the corresponding declarations.
+Then one has to state by axioms all assumptions on these constants,
+functions, and predicates. Finally one has to state all goals that
+are to be shown to be true under these assumptions.
+
+For example, take the following problem:
+
+  "A barber is a person that shaves any person if and only if that
+   person does not shave themself. Show that no barber exists."
+   
+Here we have a single relevant type "Person", a unary predicate "barber" on
+"Person" and a binary predicate "shaves" on "Person" leading to the following
+declarations:
+
+  typedecl["Person"]
+  preddecl["barber","Person"]
+  preddecl["shaves","Person","Person"]
+  
+The definition of a "barber" as "a person that shaves any person if and
+only if that person does not shave itself" can be represented by
+the axiom
+
+  axiom["barberDef", 
+    forall["x","Person",iff[pred["barber",var["x"]],
+      forall["y","Person",iff[pred["shaves",var["x"],var["y"]],
+       not[pred["shaves",var["y"],var["y"]]]]]]]]
+       
+which is conventionally written as follows:
+
+  ?x:Person.barber(x)?(?y:Person.shaves(x,y)?ｬshaves(y,y))
+
+The goal can be stated as
+
+  goal["barberNotExists", 
+    not[exists["x","Person",pred["barber",var["x"]]]]]
+  
+(conventionally written as "ｬ?x:Person.barber(x)").
+
+The whole proof problem thus can be expressed as:
+
+  problem["BarberProblem",
+    typedecl["Person"],
+    preddecl["barber","Person"],
+    preddecl["shaves","Person","Person"],
+    axiom["barberDef", 
+      forall["x","Person",iff[pred["barber",var["x"]],
+        forall["y","Person",iff[pred["shaves",var["x"],var["y"]],
+          not[pred["shaves",var["y"],var["y"]]]]]]]],
+    goal["barberNotExists", 
+      not[exists["x","Person",pred["barber",var["x"]]]]]
+ ]   
+
+Please note the order of the declarations where first the type is declared,
+then the predicates on that type, then the axiom that establishes the
+assumption on these predicates, and finally the goal whose truth we want
+to establish under these assumptions.

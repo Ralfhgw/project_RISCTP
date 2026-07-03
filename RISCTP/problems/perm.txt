@@ -1,0 +1,32 @@
+// Harrison: "Handbook of Practical Logic and Theorem Proving", page 212
+
+// integers
+type I;
+const zero:I;
+fun s(x:I):I;
+
+// lists of integers
+type L;
+const nil:L;
+fun cons(x:I,y:L):L;
+
+pred eq(x:L,y:L);
+pred delete(x:I,y:L,z:L);
+pred perm(x:L,y:L);
+
+axiom A ⇔
+  eq(nil,nil) ∧
+  (∀x:I,y1:L,y2:L. eq(y1,y2) ⇒ eq(cons(x,y1),cons(x,y2))) ∧
+   
+  (∀x:I,y:L. delete(x,cons(x,y),y)) ∧
+  (∀x:I,y:I,z:L,w:L. delete(x,z,w) ⇒ delete(x,cons(y,z),cons(y,w))) ∧
+  
+  perm(nil,nil) ∧
+  (∀x:I,y:L,u:I,v:L,z:L. delete(u,cons(x,y),z) ∧ perm(z,v) ⇒ 
+    perm(cons(x,y),cons(u,v)))
+;
+  
+theorem T ⇔ ∃x:L. 
+  perm(cons(zero,cons(s(zero),nil)),x) ∧
+  eq(cons(s(zero),cons(zero,nil)),x)
+;

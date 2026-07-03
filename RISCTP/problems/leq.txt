@@ -1,0 +1,8 @@
+// problem file "leq.txt"
+theorem T1 ⇔ ∀to:Int,from:Int. 
+  from-1 ≤ to ⇒ 0 ≤ (to-from)+1;
+// does not hold, just to test/demonstrate simplification
+theorem T2 ⇔ ∀a:Int,b:Int,c:Int. 
+  (a-b)-c ≤ (1-2)-3;
+theorem T3 ⇔ -1 ≤ 0;
+

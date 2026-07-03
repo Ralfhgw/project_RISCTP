@@ -1,0 +1,67 @@
+// addition and subtraction
+axiom '0+1' ⇔ 0+1 = 1;
+axiom '1+0' ⇔ 1+0 = 1;
+axiom '+-1' ⇔ ∀x:Int. (x+1)-1 = x;
+axiom '-+1' ⇔ ∀x:Int. (x-1)+1 = x;
+axiom 'comm+' ⇔ ∀x:Int,y:Int. x+y = y+x;
+axiom 'assoc+' ⇔ ∀x:Int,y:Int,z:Int. x+(y+z) = (x+y)+z;
+axiom 'neut+' ⇔ ∀x:Int. x+0 = x;
+axiom 'inv+' ⇔ ∀x:Int. x-x = 0;
+axiom 'def-' ⇔ ∀x:Int,y:Int. x-y = x+(-y);
+axiom 'inv-' ⇔ ∀x:Int. -(-x) = x;
+axiom 'distrib-' ⇔ ∀x:Int,y:Int. -(x+y) = (-x)+(-y);
+
+// high-level properties of inequalities
+// axiom 'preserve<*1' ⇔ ∀x:Int,y:Int,z:Int. x < y ∧ 0 < z ⇒ x⋅z < y⋅z;
+// axiom 'preserve<*2' ⇔ ∀x:Int,y:Int,z:Int. x < y ∧ 0 < z ⇒ z⋅x < z⋅y;
+// axiom 'preserve≤*1' ⇔ ∀x:Int,y:Int,z:Int. x ≤ y ∧ 0 < z ⇒ x⋅z ≤ y⋅z;
+// axiom 'preserve≤*2' ⇔ ∀x:Int,y:Int,z:Int. x ≤ y ∧ 0 < z ⇒ z⋅x ≤ z⋅y;
+axiom 'preserve<+1' ⇔ ∀x:Int,y:Int,z:Int. x < y ⇒ x+z < y+z;
+axiom 'preserve<+2' ⇔ ∀x:Int,y:Int,z:Int. x < y ⇒ z+x < z+y;
+axiom 'preserve≤+1' ⇔ ∀x:Int,y:Int,z:Int.  x ≤ y ⇒ x+z ≤ y+z;
+axiom 'preserve≤+2' ⇔ ∀x:Int,y:Int,z:Int. x ≤ y ⇒ z+x ≤ z+y;
+axiom 'preserve<-' ⇔ ∀x:Int,y:Int,z:Int.  x < y ⇒ z-y < z-x;
+axiom 'preserve≤-' ⇔ ∀x:Int,y:Int,z:Int.  x ≤ y ⇒ z-y ≤ z-x;
+axiom 'add<' ⇔ ∀x:Int,y:Int.  0 < y ⇒ x < x+y;
+axiom 'add≤' ⇔ ∀x:Int,y:Int.  0 ≤ y ⇒ x ≤ x+y;
+
+// transitivities
+axiom 'trans<' ⇔ ∀x:Int,y:Int,z:Int. x < y ∧ y < z ⇒ x < z;
+axiom 'trans≤' ⇔ ∀x:Int,y:Int,z:Int. x ≤ y ∧ y ≤ z ⇒ x ≤ z;
+axiom 'trans1≤' ⇔ ∀x:Int,y:Int,z:Int. x ≤ y ∧ y < z ⇒ x < z;
+axiom 'trans2≤' ⇔ ∀x:Int,y:Int,z:Int. x < y ∧ y ≤ z ⇒ x < z;
+
+// follows from the following but helpful for case splits
+axiom 'trich' ⇔ ∀x:Int,y:Int. x < y ∨ y < x  ∨ '='(x,y) {*} ;  
+
+// basic inequalities of ordering relations
+axiom 'part1' ⇔ ∀x:Int,y:Int. x ≤ y ∨ y < x;
+axiom 'part2' ⇔ ∀x:Int,y:Int. ¬(x ≤ y ∧ y < x);
+axiom 'def1≤'  ⇔ ∀x:Int,y:Int. x < y ∨ x = y ⇒ x ≤ y ;
+axiom 'def2≤'  ⇔ ∀x:Int,y:Int. x ≤ y ⇒ x < y ∨ '='(x,y) {*} ;  
+axiom 'excl<' ⇔ ∀x:Int,y:Int. ¬(x < y ∧ x = y);
+
+// some helpful consequences
+axiom 'excl2<' ⇔ ∀x:Int,y:Int. ¬(y < x ∧ x = y);
+// axiom 'asymm<' ⇔ ∀x:Int,y:Int. x < y ⇒ ¬(y < x);
+
+// inequalities for +1, -1, 0
+axiom '+-1<' ⇔ ∀x:Int,y:Int. '<'(x,y){*} ⇒ ¬(y < x+1) ∧ ¬(y-1 < x);
+axiom '+1≤' ⇔ ∀x:Int,y:Int. x < y ⇔ x+1 ≤ y;
+axiom '+1<' ⇔ ∀x:Int,y:Int. x ≤ y ⇔ x < y+1 ;
+axiom '-1≤' ⇔ ∀x:Int,y:Int. x < y ⇔ x ≤ y-1;
+axiom '-1<' ⇔ ∀x:Int,y:Int. x ≤ y ⇔ x-1 < y;
+axiom 'x-1<x' ⇔ ∀x:Int. x-1 < x;
+axiom 'x<x+1' ⇔ ∀x:Int. x < x+1;
+axiom '0<1≤' ⇔  ∀x:Int. 0 < x ⇔ 1 ≤ x;
+axiom '≤0<1' ⇔ ∀x:Int.  x ≤ 0 ⇔ x < 1 ;
+axiom '≤0' ⇔ ∀x:Int. 0 ≤ x ⇒ -x ≤ 0;
+axiom '<0' ⇔ ∀x:Int. 0 < x ⇒ -x < 0;
+axiom 'x≤y' ⇔ ∀x:Int,y:Int. x ≤ y ⇒ 0 ≤ y-x;
+axiom 'x<y' ⇔ ∀x:Int,y:Int. x < y ⇒ 0 < y-x;
+axiom '0<1' ⇔ 0 < 1;
+axiom '-1<0' ⇔ -1 < 0;
+
+// fundamental inequality axiom
+axiom 'irrefl<' ⇔ ∀x:Int. ¬(x < x);
+axiom 'refl≤' ⇔ ∀x:Int. x ≤ x;

@@ -1,0 +1,12 @@
+// problem file "arrays4.txt"
+const N:Nat; axiom posN ⇔ N > 0;
+type Index = Nat with value < N;
+type Value = Int;
+type Array = Map[Index,Value];
+pred sorted(a:Array,from:Index,to:Index) ⇔ 
+  ∀i:Index,j:Index. from ≤ i ∧ i < j ∧ j ≤ to ⇒ a[i] ≤ a[j];
+theorem T ⇔
+  ∀a:Array,from:Index,to:Index,x:Int.
+    from ≤ to ∧ sorted(a,from,to) ⇒
+    let i = choose i:Index with from ≤ i ∧ i ≤ to in
+    a[i] < x ⇒ ¬∃j:Index. from ≤ j ∧ j < i ∧ a[j] = x;

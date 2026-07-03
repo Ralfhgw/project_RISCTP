@@ -1,0 +1,13 @@
+// problem file "arrays.txt"
+const N:Nat; axiom posN ⇔ N > 0;
+type Index = Nat with value < N;
+type Value; type Elem = Tuple[Int,Value]; type Array = Map[Index,Elem];
+fun key(e:Elem):Int = e.1; 
+pred sorted(a:Array,from:Index,to:Index) ⇔ 
+  ∀i:Index,j:Index. from ≤ i ∧ i < j ∧ j ≤ to ⇒ key(a[i]) ≤ key(a[j]);
+theorem T ⇔
+  ∀a:Array,from:Index,to:Index,x:Int.
+    from ≤ to ∧ sorted(a,from,to) ⇒
+    // let i = (from+to)/2 in 
+    let i = choose i:Index with from ≤ i ∧ i ≤ to in
+    key(a[i]) < x ⇒ ¬∃j:Index. from ≤ j ∧ j < i ∧ key(a[j]) = x;

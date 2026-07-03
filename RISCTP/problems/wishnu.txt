@@ -1,0 +1,16 @@
+// Harrison: "Handbook of Practical Logic and Theorem Proving", page 241
+type T;
+fun f(x:T):T;
+fun g(x:T):T;
+
+// 7ms, equality level "high", depth 3
+theorem T ⇔ 
+  (∃x:T. x=f(g(x)) ∧ ∀x0:T. x0=f(g(x0)) ⇒ x=x0) ⇒ // original ⇔ is redundant
+  (∃y:T. y=g(f(y)) ∧ ∀y0:T. y0=g(f(y0)) ⇒ y=y0);
+
+/*
+// easier problem can be quickly solved with equality level "high"
+theorem T0 ⇔∀x:T. 
+  (x=f(g(x)) ∧ ∀x0:T. x0=f(g(x0)) ⇒ x=x0) ⇒
+  g(x) = g(f(g(x))) ∧ ∀y0:T. y0=g(f(y0)) ⇒ g(x)=y0;
+*/

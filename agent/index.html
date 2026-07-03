@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RISCTP Logical Agent</title>
+    <style>
+        :root {
+            --bg-color: #121214;
+            --container-bg: #1e1e24;
+            --border-color: #2a2a32;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --font-size: 10.5pt;
+        }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            margin: 20px 0 10px 0;
+            color: #ffffff;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        #output-field {
+            width: 85%;
+            height: 60%;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            background-color: var(--container-bg);
+            border-radius: 8px;
+            overflow-y: auto;
+            font-size: var(--font-size);
+            line-height: 1.6;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            box-sizing: border-box;
+        }
+
+        /* Styling fãƒ» die formatierten Chat-Elemente */
+        .chat-block {
+            margin-bottom: 25px;
+            padding: 15px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 4px solid #64748b;
+        }
+        .user-block { border-left-color: #3b82f6; }
+        .agent-block { border-left-color: #10b981; }
+        .error-block { border-left-color: #ef4444; background: rgba(239, 68, 68, 0.05); }
+
+        .block-header {
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        .user-block .block-header { color: #60a5fa; }
+        .agent-block .block-header { color: #34d399; }
+        .error-block .block-header { color: #f87171; }
+
+        pre {
+            background-color: #0f172a;
+            border: 1px solid #1e293b;
+            padding: 12px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Courier New', Courier, monospace;
+            font-size: 10pt;
+            color: #38bdf8;
+            margin: 10px 0;
+        }
+
+        code {
+            background-color: #0f172a;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #f472b6;
+        }
+
+        h2, h3 { color: #ffffff; margin-top: 15px; margin-bottom: 5px; font-size: 1.2rem; }
+        p { margin: 5px 0 10px 0; }
+
+        #input-field {
+            width: 85%;
+            height: 12%;
+            font-size: var(--font-size);
+            margin-top: 15px;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            background-color: var(--container-bg);
+            color: var(--text-main);
+            border-radius: 8px;
+            resize: none;
+            outline: none;
+            font-family: inherit;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        #input-field:focus {
+            border-color: var(--primary);
+        }
+
+        .button-container {
+            margin-top: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            padding: 10px 30px;
+            font-size: 11pt;
+            font-weight: 500;
+            cursor: pointer;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            transition: background-color 0.15s;
+        }
+
+        #submit-btn { background-color: var(--primary); }
+        #submit-btn:hover { background-color: var(--primary-hover); }
+        #reset-btn { background-color: #334155; color: var(--text-main); }
+        #reset-btn:hover { background-color: #475569; }
+
+        button:disabled {
+            background-color: #27272a !important;
+            color: #71717a !important;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <h1>RISCTP Logical Agent</h1>
+
+    <div id="output-field"></div>
+
+    <textarea id="input-field" placeholder="Nachricht eingeben... (Enter zum Senden, Shift+Enter fãƒ» neue Zeile)"></textarea>
+
+    <div class="button-container">
+        <button id="submit-btn">Senden</button>
+        <button id="reset-btn">Reset</button>
+    </div>
+
+    <script>
+        const outputField = document.getElementById('output-field');
+        const inputField = document.getElementById('input-field');
+        const submitBtn = document.getElementById('submit-btn');
+        const resetBtn = document.getElementById('reset-btn');
+
+        // Ein einfacher, 100% offline-fè‡§iger Mini-Markdown-Parser
+        function cleanMarkdown(text) {
+            let html = text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+
+            // Code-Blî’‹ke (```text ... ```)
+            html = html.replace(/```(?:[a-zA-Z]*)\n([\s\S]*?)\n```/g, '<pre>$1</pre>');
+            
+            // Inline-Code (`code`)
+            html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+            
+            // ï¾œberschriften (### Titel oder ## Titel)
+            html = html.replace(/^### (.*)$/gm, '<h3>$1</h3>');
+            html = html.replace(/^## (.*)$/gm, '<h2>$1</h2>');
+            
+            // Fettgedruckt (**Text**)
+            html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+            
+            // Zeilenumbrãƒ»he erhalten
+            html = html.replace(/\n/g, '<br>');
+            // Doppelte Umbrãƒ»he bei Code-Blî’‹ken sèˆ«bern
+            html = html.replace(/<\/pre><br>/g, '</pre>');
+
+            return html;
+        }
+
+        async function sendMessage() {
+            const message = inputField.value;
+            if (!message.trim() || submitBtn.disabled) return;
+
+            submitBtn.disabled = true;
+            resetBtn.disabled = true;
+
+            // User-Block hinzufãƒ»en
+            outputField.innerHTML += `
+                <div class="chat-block user-block">
+                    <div class="block-header">=== USER ===</div>
+                    <div>${cleanMarkdown(message)}</div>
+                </div>`;
+
+            inputField.value = '';
+            outputField.scrollTop = outputField.scrollHeight;
+
+            try {
+                const response = await fetch('/agent', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: message })
+                });
+
+                if (!response.ok) throw new Error('Server-Fehler bei der Verarbeitung.');
+
+                const data = await response.json();
+
+                // Agenten-Block hinzufãƒ»en
+                outputField.innerHTML += `
+                    <div class="chat-block agent-block">
+                        <div class="block-header">=== AGENT ===</div>
+                        <div>${cleanMarkdown(data.result)}</div>
+                    </div>`;
+            } catch (error) {
+                outputField.innerHTML += `
+                    <div class="chat-block error-block">
+                        <div class="block-header">=== ERROR ===</div>
+                        <div>${error.message}</div>
+                    </div>`;
+            } finally {
+                submitBtn.disabled = false;
+                resetBtn.disabled = false;
+                outputField.scrollTop = outputField.scrollHeight;
+            }
+        }
+
+        submitBtn.addEventListener('click', sendMessage);
+
+        inputField.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+
+        resetBtn.addEventListener('click', async () => {
+            try {
+                const response = await fetch('/reset', { method: 'POST' });
+                if (!response.ok) throw new Error('Server-Fehler beim Zurãƒ»ksetzen.');
+                inputField.value = '';
+                outputField.innerHTML = '<div class="chat-block" style="border-left-color: #e2e8f0;"><div class="block-header" style="color: var(--text-muted)">=== System-Verlauf zurãƒ»kgesetzt ===</div></div>';
+            } catch (error) {
+                outputField.innerHTML += `<div class="chat-block error-block"><div class="block-header">=== ERROR ===</div><div>${error.message}</div></div>`;
+            }
+        });
+    </script>
+</body>
+</html>

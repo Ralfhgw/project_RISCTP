@@ -1,0 +1,24 @@
+// problem file "bounded.txt"
+type Index = Int;
+type Value = Int;
+type Seq = Map[Index,Value]; 
+pred bounded(seq:Seq) ⇔ 
+  ∃b1:Value. ∃b2:Value. ∀i:Index. b1 ≤ seq[i] ∧ seq[i] ≤ b2;
+pred sum(a:Seq,b:Seq,c:Seq) ⇔ ∀i:Index. c[i] = a[i]+b[i];
+theorem T ⇔
+  ∀a:Seq, b:Seq, c:Seq. sum(a,b,c) ∧ bounded(a) ∧ bounded(b) ⇒ bounded(c);
+/*
+theorem T0 ⇔
+  ∀a:Seq, b:Seq.
+    (∃bound:Value. ∀i:Index. a[i] ≤ bound) ∧
+    (∃bound:Value. ∀i:Index. b[i] ≤ bound) ⇒
+      (∃bound:Value. ∀i:Index. a[i]+b[i] ≤ bound);
+*/
+/*
+theorem T1 ⇔
+  ∀a:Seq, b:Seq, c:Seq.
+    (∀i:Index. c[i] = a[i]+b[i]) ∧
+    (∃bound:Value. ∀i:Index. a[i] ≤ bound) ∧
+    (∃bound:Value. ∀i:Index. b[i] ≤ bound) ⇒
+      (∃bound:Value. ∀i:Index. c[i] ≤ bound);
+*/

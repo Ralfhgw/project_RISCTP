@@ -1,0 +1,9 @@
+// problem file "expand.txt"
+type T;
+const a:T;
+const b:T = a;
+pred p(x:T);
+fun f(x:T):T;
+fun g(x:T):T = f(f(x));
+pred q(x:T,y:T) ⇔ g(x) = y;
+theorem T ⇔ q(b,f(f(a)));

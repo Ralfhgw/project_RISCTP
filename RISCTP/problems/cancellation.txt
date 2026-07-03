@@ -1,0 +1,8 @@
+// Harrison: "Handbook of Practical Logic and Theorem Proving", page 284
+type T;
+fun f(x1:T,x2:T):T;
+
+// requires equality "med"
+theorem T ⇔
+  (∀x:T,y:T,z:T. f(x,y) = f(x,z) ⇒ y = z) ⇔
+  (∀x:T,z:T. ∃w:T. ∀y:T. z = f(x,y) ⇒ w = y);

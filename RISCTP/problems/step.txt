@@ -1,0 +1,12 @@
+// problem file "step.txt"
+pred p(x:Int);
+
+// require equality "med"
+theorem T1 ⇔∀n:Int.
+  (∀i:Int. i < n ⇒ p(i)) ∧ p(n) ⇒
+  (∀i:Int. i ≤ n ⇒ p(i))
+;
+theorem T2 ⇔∀n:Int.
+  (∀i:Int. i < n ⇒ p(i)) ∧ p(n) ⇒
+  (∀i:Int. i < n+1 ⇒ p(i))
+;

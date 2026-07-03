@@ -1,0 +1,9 @@
+// problem file "arrays3.txt"
+type Array = Map[Int,Int];
+pred sorted(a:Array,from:Int,to:Int) ⇔ 
+  ∀i:Int,j:Int. from ≤ i ∧ i < j ∧ j ≤ to ⇒ a[i] ≤ a[j];
+theorem T ⇔
+  ∀a:Array,from:Int,to:Int,x:Int.
+    from ≤ to ∧ sorted(a,from,to) ⇒
+    ∀i:Int. from ≤ i ∧ i ≤ to ∧ a[i] ≤ x ⇒ 
+      ∀j:Int. from ≤ j ∧ j < i ⇒ a[j] ≤ x;

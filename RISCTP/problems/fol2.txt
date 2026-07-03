@@ -1,0 +1,5 @@
+// problem file "fol2.txt"
+type T;
+pred p(x:T,y:T);
+// actually, implication only holds from left to right
+theorem T ⇔ (∃x:T.∀y:T.p(x,y)) ⇔ (∀x:T.∃y:T.p(y,x));

@@ -1,0 +1,14 @@
+// problem file "fol4.txt"
+type T;
+pred p(x:T);
+pred q(x:T);
+pred r(x:T);
+pred s(x:T);
+const c:T;
+const d:T;
+axiom A1 ⇔ ∀x:T. p(x) ∧ q(x) ⇒ r(x);
+axiom A2 ⇔ ∀x:T. p(x) ∧ q(x) ⇒ s(x);
+axiom A3 ⇔ p(c);
+axiom A4 ⇔ q(c);
+axiom A5 ⇔ p(d);
+theorem T ⇔ (∃x:T. r(x) ∧ s(x));

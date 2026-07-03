@@ -1,0 +1,15 @@
+// problem file "limit.txt"
+type Val = Int;
+type Seq = Map[Int,Val]; 
+fun abs(a:Val):Val;
+axiom absAx ⇔ 
+  ∀x:Val,y:Val,a:Val,b:Val,'δ':Val,'ε':Val,s:Val. 
+    abs(x-a) < 'δ' ∧ abs(y-b) < 'ε' ∧ s = 'δ'+'ε' ⇒ abs((x+y)-(a+b)) < s;
+fun max(a:Val,b:Val):Val;
+axiom maxAx ⇔ ∀m:Int,M1:Int,M2:Int. m ≥ max(M1,M2) ⇒ m ≥ M1 ∧ m ≥ M2;
+pred limit(f:Seq,a:Val) ⇔ ∀'ε':Val. 'ε' > 0 ⇒ ∃N:Int. ∀n:Int. n ≥ N ⇒ abs(f[n]-a) < 'ε';
+fun sum(f:Seq,g:Seq):Seq;
+axiom sumAx ⇔ ∀f:Seq,g:Seq,x:Int. sum(f,g)[x]=f[x]+g[x];
+axiom splitAx ⇔ ∀x:Val. x > 0 ⇒ ∃y:Val,z:Val. y > 0 ∧ z > 0 ∧ x = y+z;
+theorem LimitOfSum ⇔
+  ∀f:Seq,a:Val,g:Seq,b:Val. limit(f,a) ∧ limit(g,b) ⇒ limit(sum(f,g),a+b);

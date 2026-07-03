@@ -1,0 +1,8 @@
+// Harrison: "Handbook of Practical Logic and Theorem Proving", page 185
+type T;
+pred f(x:T,y:T);
+pred g(x:T,y:T);
+theorem T ⇔ 
+  ∃x:T. ∃y:T. ∀z:T.
+    (f(x,y) ⇒ (f(y,z) ∧ f(z,z))) ∧
+    (f(x,y) ∧ g(x,y) ⇒ g(x,z) ∧ g(z,z));

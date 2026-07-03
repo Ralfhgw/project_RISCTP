@@ -1,0 +1,15 @@
+// Harrison: "Handbook of Practical Logic and Theorem Proving", page 162
+type T;
+pred p(x:T);
+pred r(x:T,y:T);
+const a:T;
+theorem T ⇔ 
+  (∀x:T. 
+    p(a) ∧ (p(x) ⇒ (∃y:T. p(y) ∧ r(x,y)))
+    ⇒ (∃z:T,w:T. p(z) ∧ r(x,w) ∧ r(w,z)))
+  ⇔
+  (∀x:T.
+    (¬p(a) ∨ p(x) ∨ 
+      (∃z:T,w:T. p(z) ∧ r(x,w) ∧ r(w,z))) ∧
+    (¬p(a) ∨ ¬(∃y:T. p(y) ∧ r(x,y)) ∨
+      (∃z:T,w:T. p(z) ∧ r(x,w) ∧ r(w,z))));

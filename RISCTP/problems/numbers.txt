@@ -1,0 +1,10 @@
+// problem file "numbers.txt"
+// now solved by automatic simplification
+// (originally: these can be proved *without* switching on equality)
+theorem T1⇔ 1 > 0;
+theorem T2⇔ 2 > 1;
+theorem T3 ⇔ 1+1 > 0;
+theorem T4 ⇔ 0+1 < 2;
+theorem T5 ⇔ 0 < 2;
+theorem T6 ⇔ 2 > 0;
+theorem T7 ⇔ 4 > 2;

@@ -1,0 +1,10 @@
+// problem file "fol3.txt"
+type T;
+pred p(x:T);
+pred q(x:T);
+const c:T;
+const d:T;
+axiom A2 ⇔ p(d);
+axiom A3 ⇔ q(d);
+axiom A1 ⇔ p(c);
+theorem T ⇔ (∃x:T.p(x) ∧ q(x));

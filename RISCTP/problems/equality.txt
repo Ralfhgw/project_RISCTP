@@ -1,0 +1,7 @@
+// originally required equality "low", now closed by problem simplification
+type T;
+theorem T1 ⇔ ∀x:T. x=x;
+theorem T2 ⇔ ∀x:T,y:T. x=y ⇒ y=x;
+theorem T3 ⇔ ∀x:T,y:T,z:T. x=y ∧ y=z ⇒ x=z;
+theorem T4 ⇔ ∀x:T,y:T,z:T. x=z ∧ y=z ⇒ x=y;
+theorem T5 ⇔ ∀x:T,y:T,z:T. x=y ∧ x=z ⇒ y=z;

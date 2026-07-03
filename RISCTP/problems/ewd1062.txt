@@ -1,0 +1,12 @@
+// Harrison: "Handbook of Practical Logic and Theorem Proving", page 179
+type T;
+pred leq(x:T,y:T);
+fun f(x:T):T;
+fun g(x:T):T;
+theorem T ⇔ 
+  (∀x:T. leq(x,x)) ∧
+  (∀x:T,y:T,z:T. leq(x,y) ∧ leq(y,z) ⇒ leq(x,z)) ∧
+  (∀x:T,y:T. leq(f(x),y) ⇔ leq(x,g(y)))
+  ⇒
+  (∀x:T,y:T. leq(x,y) ⇒ leq(f(x),f(y))) ∧
+  (∀x:T,y:T. leq(x,y) ⇒ leq(g(x),g(y)));

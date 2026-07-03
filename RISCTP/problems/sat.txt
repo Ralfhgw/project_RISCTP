@@ -1,0 +1,26 @@
+// problem file "sat.txt"
+// the following run successfully with timeout 5s (*without* smt)
+
+// for T1-T4, use proof depth 1 to find "natural" proofs that start from
+// another goal to find values for n,n1,n2 that make the index range empty
+const a:Map[Int,Int];
+theorem T1 ⇔ ∃n:Int. ∀i:Int. 0 ≤ i ∧ i < n ⇒ a[i] = 0;
+theorem T2 ⇔ ∃b:Map[Int,Int],n:Int. ∀i:Int. 0 ≤ i ∧ i < n ⇒ b[i] = 0;
+theorem T3 ⇔ ∃n1:Int,n2:Int. ∀i:Int. n1 ≤ i ∧ i < n2 ⇒ a[i] = 0;
+theorem T4 ⇔ ∃b:Map[Int,Int],n1:Int,n2:Int. ∀i:Int. n1 ≤ i ∧ i < n2 ⇒ b[i] = 0;
+
+// for T5-T6, depth 2 is required, which finds an "unnatural" proof 
+// already from the first goal 
+theorem T5 ⇔ ∃n1:Int,n2:Int. 
+  ∀i1:Int,i2:Int. n1 ≤ i1 ∧ i1 < i2 ∧ i2 < n2 ⇒ a[i1] < a[i2];
+theorem T6 ⇔ ∃b:Map[Int,Int],n1:Int,n2:Int. 
+  ∀i1:Int,i2:Int. n1 ≤ i1 ∧ i1 < i2 ∧ i2 < n2 ⇒ b[i1] < b[i2];
+
+// now with side conditions on n,n1,n2
+// T1a-T3b require depth 2
+theorem T1a ⇔ ∃n:Int. n ≥ 0 ∧ ∀i:Int. 0 ≤ i ∧ i < n ⇒ a[i] = 0;
+theorem T2a ⇔ ∃b:Map[Int,Int],n:Int. n ≥ 0 ∧ ∀i:Int. 0 ≤ i ∧ i < n ⇒ b[i] = 0;
+theorem T3a ⇔ ∃n1:Int,n2:Int. n1 ≥ 0 ∧ ∀i:Int. n1 ≤ i ∧ i < n2 ⇒ a[i] = 0;
+theorem T3b ⇔ ∃n1:Int,n2:Int. n1-1 ≤ n2 ∧ ∀i:Int. n1 ≤ i ∧ i < n2 ⇒ a[i] = 0;
+// T3c would require depth 3 but does not terminate in multiple minutes...
+// theorem T3c ⇔ ∃n1:Int,n2:Int. n1 ≥ 0 ∧ n1-1 ≤ n2 ∧ ∀i:Int. n1 ≤ i ∧ i < n2 ⇒ a[i] = 0;

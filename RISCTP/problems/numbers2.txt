@@ -1,0 +1,5 @@
+// problem file "numbers2.txt"
+// now solved by automatic simplification
+// (originally: requires equality "low")
+theorem T1 ⇔ 2+2 = 3+1;
+theorem T2 ⇔ 2+3 = 4+1;

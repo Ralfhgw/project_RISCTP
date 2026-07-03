@@ -1,0 +1,10 @@
+// Harrison: "Handbook of Practical Logic and Theorem Proving", page 287
+type T;
+const c:T;
+pred p(x:T,y:T,z:T);
+theorem T ⇔ 
+  (∀x:T. p(c,x,x)) ∧
+  (∀x:T. p(x,x,c)) ∧
+  (∀u:T,v:T,w:T,x:T,y:T,z:T.
+    p(x,y,u) ∧ p(y,z,w) ⇒ (p(x,w,v) ⇔ p(u,z,v)))
+⇒ (∀a:T,b:T,c:T. p(a,b,c) ⇒ p(b,a,c)) ;

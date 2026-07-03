@@ -1,0 +1,52 @@
+// problem file "split.txt"
+pred p(x:Int);
+theorem T1 ⇔
+  ∀a:Int,b:Int.
+    a ≤ b ∧
+    p(b) ∧
+    (∀i:Int. a ≤ i ∧ i < b ⇒ p(i)) ⇒
+      (∀k:Int. a ≤ k ∧ k ≤ b ⇒ p(k))
+;
+theorem T2 ⇔
+  ∀a:Int,b:Int.
+    a ≤ b ∧
+    (∀i:Int. a ≤ i ∧ i < b ⇒ p(i)) ∧
+    p(b) ⇒
+      (∀k:Int. a ≤ k ∧ k ≤ b ⇒ p(k))
+;
+theorem T3 ⇔
+  ∀a:Int,b:Int.
+    a ≤ b ∧
+    p(a) ∧
+    (∀i:Int. a < i ∧ i ≤ b ⇒ p(i)) ⇒
+      (∀k:Int. a ≤ k ∧ k ≤ b ⇒ p(k))
+;
+theorem T4 ⇔
+  ∀a:Int,b:Int,c:Int.
+    a ≤ b ∧ b ≤ c ∧
+    p(b) ∧
+    (∀i:Int. (a ≤ i ∧ i ≠ b ∧ i ≤ c) ⇒ p(i)) ⇒
+      (∀k:Int. a ≤ k ∧ k ≤ c ⇒ p(k))
+;
+theorem T5 ⇔
+  ∀a:Int,b:Int,c:Int.
+    a ≤ b ∧ b ≤ c ∧
+    p(b) ∧
+    (∀i:Int. a ≤ i ∧ i < b ⇒ p(i)) ∧
+    (∀j:Int. b < j ∧ j ≤ c ⇒ p(j)) ⇒
+      (∀k:Int. a ≤ k ∧ k ≤ c ⇒ p(k))
+;
+theorem T6 ⇔
+  ∀a:Int,b:Int,c:Int.
+    a ≤ b ∧ b ≤ c ∧
+    (∀i:Int. a ≤ i ∧ i < b ⇒ p(i)) ∧
+    (∀j:Int. b ≤ j ∧ j ≤ c ⇒ p(j)) ⇒
+      (∀k:Int. a ≤ k ∧ k ≤ c ⇒ p(k))
+;
+theorem T7 ⇔
+  ∀a:Int,b:Int,c:Int.
+    a ≤ b ∧ b ≤ c ∧
+    (∀i:Int. a ≤ i ∧ i ≤ b ⇒ p(i)) ∧
+    (∀j:Int. b < j ∧ j ≤ c ⇒ p(j)) ⇒
+      (∀k:Int. a ≤ k ∧ k ≤ c ⇒ p(k))
+;

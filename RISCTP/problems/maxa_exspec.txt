@@ -1,0 +1,19 @@
+// file "maxa_exspec.txt"
+// derived from example "array_maximum" of exspec distribution: 
+// specification of the computation of the maximum m
+// of an integer array a of length l;
+// the satisfiying counterexample provides m
+const len:Int;
+const a:Map[Int,Int];
+const m:Int;
+theorem T ⇔ 
+(
+  len = 10 ∧ 
+  a[0] = 7 ∧ a[1] = 2 ∧ a[2] = 8 ∧ a[3] = 3 ∧ a[4] = 2 ∧ 
+  a[5] = 7 ∧ a[6] = 1 ∧ a[7] = 4 ∧ a[8] = 4 ∧ a[9] = 4
+) ⇒ ¬
+(
+  (∀i:Int. i ≥ 0 ∧ i < len ⇒ m ≥ a[i]) ∧
+  // also restrict index here, otherwise m could be arbitrary
+  (∃i:Int. i ≥ 0 ∧ i < len ∧ m = a[i]) 
+);

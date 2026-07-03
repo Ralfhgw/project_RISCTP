@@ -1,0 +1,19 @@
+// file "sort_exspec.txt";
+// derived from example "sort_correct1" of exspec distribution: 
+// specification of the sorting of an integer array of length len to
+// an array b of same length using the permutation p
+// the satisfiying counterexample provides a,len,b,p
+
+const a:Map[Int,Int];
+const len:Int;
+const b:Map[Int,Int];
+const p:Map[Int,Int];
+
+theorem T ⇔
+  len = 4 ∧ a[0] = 3 ∧ a[1] = 1 ∧ a[2] = 0 ∧ a[3] = 3 ⇒
+  ¬(
+    (∀i:Int. i ≥ 0 ∧ i < len ⇒ p[i] ≥ 0 ∧ p[i] < len ∧ b[i] = a[p[i]]) ∧
+    (∀i:Int. i ≥ 0 ∧ i < len ⇒ ∃j:Int. j ≥ 0 ∧ j < len ∧ p[j] = i) ∧
+    (∀i:Int. i ≥ 0 ∧ i < len-1 ⇒ b[i] <= b[i+1])
+  )
+;

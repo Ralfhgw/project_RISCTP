@@ -1,0 +1,5 @@
+// Harrison: "Handbook of Practical Logic and Theorem Proving", page 180
+type T;
+pred shaves(x:T,y:T);
+theorem T ⇔ 
+  ¬(∃b:T. ∀x:T. shaves(b,x) ⇔ ¬shaves(x,x));

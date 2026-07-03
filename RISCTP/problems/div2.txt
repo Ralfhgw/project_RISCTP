@@ -1,0 +1,3 @@
+// problem file "div2.txt", requires axioms "Int*" for MESON
+theorem T1 ⇔ ∀a:Int,b:Int. a ≤ b ⇒ a ≤ (a+b)/2 ∧ (a+b)/2 ≤ b;
+theorem T2 ⇔ ∀a:Int,b:Int. a < b ⇒ (a+b)/2 < b;

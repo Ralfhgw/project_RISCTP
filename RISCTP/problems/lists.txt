@@ -1,0 +1,15 @@
+// problem file "lists.txt"
+datatype IntList = empty | cons(head:Int,tail:IntList);
+fun sum(l:IntList):Int;
+axiom sumax ⇔ ∀l:IntList.
+  sum(l) =
+    match l with
+    | empty -> 0
+    | cons(h:Int,t:IntList) -> h+sum(t);
+    
+// quickly solvable by SMT but, interestingly, the SMT solver cannot find
+// a proof from the clauses, only from the whole problem
+
+// requires equality "low" and depth 7
+theorem T ⇔
+  let l = cons(1, cons(2, empty)) in sum(l) = 3;

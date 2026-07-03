@@ -1,0 +1,9 @@
+// Harrison: "Handbook of Practical Logic and Theorem Proving", page 302
+type T;
+fun f(x:T):T;
+
+// requires equality "low"
+theorem T ⇔ 
+  (∀x:T. f(f(x)) = f(x)) ∧
+  (∀x:T. ∃y:T. f(y) = x) 
+⇒ (∀x:T. f(x) = x);

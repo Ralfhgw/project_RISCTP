@@ -1,0 +1,80 @@
+------------------------------------------------------------------------------
+CHANGES
+Change history of RISCTP.
+
+Author: Wolfgang Schreiner <Wolfgang.Schreiner@risc.jku.at>
+Copyright (C) 2022-, Research Institute for Symbolic Computation (RISC)
+Johannes Kepler University, Linz, Austria, https://www.risc.jku.at
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+------------------------------------------------------------------------------
+
+1.9.1 (June 23, 2026)
+  Switch to Java 21.
+1.9.0 (April 14, 2026)
+  Integration of resolution/superposition prover by Viktoria Langenreither.
+1.8.5 (February 20, 2026)
+  Minor bug fix to allow reading problem file also in case of option "-web".
+1.8.4 (February 25, 2025)
+  Minor bug fix in transforming choose expressions and problem decomposition.
+1.8.3 (December 11, 2024)
+  Minor bug fixes related to problem decomposition and formula display.
+1.8.2 (November 27, 2024)
+  Minor bug fixes related to problem decomposition and proof display.
+1.8.1 (July 22, 2024)
+  Minor changes and bug fixes related to problem decomposition.
+1.8.0 (July 15, 2024)
+  Numerous improvements and bug fixes in MESON proving and SMT solving.
+1.7.1 (November 23, 2023)
+  Improvements and bug fixes in GUI and equality/theory reasoning.
+1.7.0 (October 12, 2023)
+  Equality reasoning in paramodulation-like style.
+1.6.0 (September 23, 2023)
+  Theory support for MESON prover by axiomatization and/or SMT solving.
+  Experimental support for Stefan Ratschan's ExSpec solver.
+1.5.2 (June 22, 2023)
+  Switch to Java 17.  
+1.5.1 (June 13, 2023)
+  Improved memory handling for large proof search trees.
+1.5.0 (June 12, 2023)
+  Introduce model elimination (MESON) prover.
+1.4.3 (March 23, 2023)
+  Initial code for model elimination prover.
+1.4.2 (March 8, 2023)
+  Introduce a low-overhead term representation for first-order proof methods.
+1.4.1 (March 2, 2023)
+  Introduce clausal form computation.
+  Prepare for first-order proof methods 'me' and 'res'.
+1.4 (February 22, 2023)
+  Introduce problem decomposition and web GUI.
+1.3.1 (September 16, 2022)
+  Fix bug in map store axiom.
+1.3 (July 22, 2013)
+  Introduce "choose[sat]" expressions.
+1.2 (July 8, 2022)
+  Integrate bindings for cvc5 and Vampire.
+1.1 (July 6, 2022)
+  First version used in RISCAL with various bug fixes
+  and (mostly internal) changes, in particular: 
+  - internal reorganization to make library thread-safe.
+  - remove constraint that applications of the tuple constructor
+    must be syntactically preceded by the tuple type.
+  - if SMT solver yields "sat", print counterexample model (only
+    the values of integer constants) 
+1.0 (June 8, 2022)
+  First release.
+
+------------------------------------------------------------------------------
+End of CHANGES.
+------------------------------------------------------------------------------

@@ -1,0 +1,21 @@
+// problem file "lists2.txt"
+datatype IntList = empty | cons(head:Int,tail:IntList);
+fun sum(l:IntList):Int;
+axiom sumax ⇔ ∀l:IntList.
+  sum(l) =
+    match l with
+    | empty -> 0
+    | cons(h:Int,t:IntList) -> h+sum(t);
+theorem T ⇔
+  // let l = empty in sum(l) = 0;
+  // let l = cons(2,empty) in sum(l) = 2+0;
+  // let l = cons(1, empty) in sum(l) = 1;
+  // ∀x:Int,y:Int. let l = cons(x, cons(y, empty)) in sum(l) = x+(y+0);
+  // let l = cons(0, cons(0, empty)) in sum(l) = 0+(0+0);
+  // let l = cons(1, cons(2, empty)) in sum(l) = 1+(2+0);
+  // let l = cons(0, cons(0, empty)) in sum(l) = 0;
+  // let l = cons(1, cons(1, empty)) in sum(l) = 2;
+  
+  // requires equality "low" and depth 7, provable in <100ms
+  let l = cons(1, cons(2, empty)) in sum(l) = 3;
+  

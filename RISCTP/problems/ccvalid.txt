@@ -1,0 +1,13 @@
+// Harrison: "Handbook of Practical Logic and Theorem Proving", page 253
+// requires equality level "Max"
+// quickest solvable in MESON with depth = 2 to immediately find the 
+// right starting point (last but one clause)
+type T;
+const c:T;
+fun f(x:T):T;
+fun g(x:T):T;
+
+// requires equality "max"
+theorem T ⇔ 
+  f(f(f(f(f(c))))) = c ∧ f(f(f(c))) = c
+⇒ f(c) = c ∨ f(g(c)) = g(f(c));

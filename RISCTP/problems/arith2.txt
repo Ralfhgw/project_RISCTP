@@ -1,0 +1,10 @@
+// problem file "arith2.txt"
+// axiom A1 ⇔ ∀a:Int,b:Int. (a+b)-b = a;
+// axiom A2 ⇔ ∀a:Int,b:Int,c:Int. (a-b)+c = (a+c)-b;
+// theorem T0 ⇔ ∀a:Int,b:Int. (a-b)+b = a;
+
+// unsolvable by SMT and by MESON
+// theorem T1 ⇔ ∀m:Nat,n:Nat,q:Nat,r:Nat. n > 0 ∧ m = n⋅q+r ⇒
+//   ((∀q0:Nat,r0:Nat. m = n⋅q0+r0 ⇒ r ≤ r0) ⇒ r < n);
+// theorem T2 ⇔ ∀m:Nat,n:Nat,q:Nat,r:Nat. n > 0 ∧ m = n⋅q+r ⇒
+//   (r < n ⇒ (∀q0:Nat,r0:Nat. m = n⋅q0+r0 ⇒ r ≤ r0));

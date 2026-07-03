@@ -1,0 +1,17 @@
+type T;
+const zero:T;
+fun succ(x:T):T;
+
+pred eq(x:T,y:T);
+pred leq(x:T,y:T);
+
+axiom A ⇔
+  eq(zero,zero) ∧
+  (∀x:T,y:T. eq(x,y) ⇒ eq(succ(x),succ(y))) ∧
+  (∀x:T. leq(zero,x)) ∧
+  (∀x:T,y:T. leq(x,y) ⇒ leq(succ(x),succ(y)));
+  
+theorem T ⇔
+  (∃x:T. leq(x,succ(succ(zero))) ∧ eq(x,succ(succ(zero)))) ∧
+  (∃y:T. leq(succ(succ(zero)),y) ∧ eq(y,succ(succ(succ(zero)))))
+;

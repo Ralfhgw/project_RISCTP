@@ -1,0 +1,74 @@
+// problem file "eqarray.txt"
+type IntArray = Map[Int,Int];
+type BoolArray = Map[Int,Bool];
+const n:Int;
+const m:Int;
+
+theorem T1 ⇔
+  ∀a:IntArray,b:IntArray.
+    (∀i:Int. a[i] = 0) ∧ (∀i:Int. b[i] = 0) ⇒ a = b;
+    
+theorem T2 ⇔
+  ∀a:IntArray,b:IntArray.
+    (∀i:Int. a[i] = b[i]) ⇒ a = b;
+    
+theorem T3 ⇔
+  ∀a:BoolArray,b:BoolArray.
+    (∀i:Int. a[i]) ∧ (∀i:Int. b[i]) ⇒ a = b;
+theorem T4 ⇔
+  ∀a:BoolArray,b:BoolArray.
+    (∀i:Int. a[i] = b[i]) ⇒ a = b;
+theorem T5 ⇔
+  ∀a:BoolArray,b:BoolArray.
+    (∀i:Int. a[i] ⇔ b[i]) ⇒ a = b;
+
+theorem T6 ⇔
+  ∀a:BoolArray,b:BoolArray.
+    (∀i:Int. if i < n then a[i] else ¬a[i]) ∧ 
+    (∀i:Int. if i < n then b[i] else ¬b[i]) ⇒ a = b;
+
+theorem T7 ⇔
+  ∀a:BoolArray,b:BoolArray.
+    (∀i:Int. if m < i ∧ i < n then a[i] else ¬a[i]) ∧ 
+    (∀i:Int. if m < i ∧ i < n then b[i] else ¬b[i]) ⇒ a = b;
+    
+theorem T7a ⇔
+  ∀a:BoolArray,b:BoolArray.
+    (∀i:Int. if m < i ∧ i < n then a[i]=true else a[i]=false) ∧ 
+    (∀i:Int. if m < i ∧ i < n then b[i]=true else b[i]=false) ⇒ a = b;
+
+theorem T8 ⇔
+  ∀a:BoolArray,b:BoolArray.
+    (∀i:Int. if i < n then a[i]=true else a[i]=false) ∧ 
+    (∀i:Int. if i < n then b[i]=true else b[i]=false) ⇒ a = b;
+   
+// cannot be proved due to limited case distinction capabilities
+// as also demonstrated by the simpler theorem below
+
+/*
+
+theorem T9 ⇔
+  ∀a:IntArray,b:IntArray.
+    (∀i:Int. if i < n then a[i]=0 else a[i]=1) ∧ 
+    (∀i:Int. if i < n then b[i]=0 else b[i]=1) ⇒ a = b;
+   
+*/
+
+/*
+
+type Index;
+type Elem;
+type Array=Map[Index,Elem];
+const c1:Elem;
+const c2:Elem;
+pred p(i:Index);
+theorem T10 ⇔
+  ∀a:Array,b:Array.
+    (∀i:Index. if p(i) then a[i]=c1 else a[i]=c2) ∧ 
+    (∀i:Index. if p(i) then b[i]=c1 else b[i]=c2) ⇒ 
+    (∀i:Index. a[i] = b[i]);
+    
+*/
+
+
+

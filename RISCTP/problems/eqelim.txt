@@ -1,0 +1,8 @@
+// Harrison: "Handbook of Practical Logic and Theorem Proving", page 288
+type T;
+pred r(x:T,y:T);
+theorem T ⇔ 
+  (∀x:T. r(x,x)) ∧
+  (∀x:T,y:T. r(x,y) ⇒ r(y,x)) ∧
+  (∀x:T,y:T,z:T. r(x,y) ∧ r(y,z) ⇒ r(x,z)) 
+⇔ (∀x:T,y:T. r(x,y) ⇔ (∀z:T. r(x,z) ⇔ r(y,z)));

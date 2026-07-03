@@ -1,0 +1,9 @@
+// problem file "types.txt"
+type Pair = Tuple[Int,Int]; 
+type Array = Map[Int,Int];
+theorem T0 ⇔
+  ∀x:Int,y:Int. let p = ⟨x,y⟩ in p.1 = x ∧ p.2 = y;
+theorem T1 ⇔
+  ∀p:Pair,x:Int. let q = p with .1 = x in q.1 = x;
+theorem T2 ⇔
+  ∀a:Array,i:Int,x:Int. let b = a with [i] = x in b[i] = x;

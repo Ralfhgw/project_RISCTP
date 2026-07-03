@@ -1,0 +1,19 @@
+// problem file "eq.txt"
+type T;
+pred p(x:T);
+fun f(x:T):T;
+fun g(x:T):T;
+axiom A ⇔ ∀x:T. p(x) ⇒ g(x) = f(f(x));
+
+// requires equality "low"
+theorem T ⇔ ∀c:T. p(c) ⇒ f(f(f(c))) = f(g(c));
+
+fun h(x:T):T;
+fun i(x:T):T;
+fun j(x:T):T;
+axiom B ⇔ ∀x:T. i(x)=h(x);
+
+// does not hold
+// theorem U ⇔ ∀c:T. j(c) = h(c);
+
+

@@ -1,0 +1,11 @@
+// problem file "arith1.txt"
+theorem T1 ⇔ ∀i:Int. i ≥ 0 ∧ i ≤ 0 ⇒ i = 0;
+theorem T2 ⇔ ∀i:Int. i > 0 ∨ i < 0 ⇒ i ≠ 0;
+theorem T3 ⇔ ∀x:Int,y:Int. x < y ⇒ ¬(x = y);
+theorem T4 ⇔ ∀x:Int,y:Int. x < y ⇒  x ≠ y;
+theorem T5 ⇔ ∀x:Int,y:Int. ¬(x = y) ⇒ x < y ∨ x > y;
+theorem T6 ⇔ ∀a:Int,b:Int. a = b ⇒ ¬(a < b);
+theorem T7 ⇔ ∀x:Int,y:Int. x ≠ y ⇒ x < y ∨ x > y;
+theorem T8 ⇔ ∀i:Int. i > 0 => i+1 > 1;
+theorem T9 ⇔ ∀i:Int. i ≤ i+1;
+

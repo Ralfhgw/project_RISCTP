@@ -1,0 +1,23 @@
+// problem file "eqcase.txt"
+type T;
+const c1:T;
+const c2:T;
+pred p(x:T);
+fun f(x:T):T;
+fun g(x:T):T;
+
+theorem T1 ⇔ 
+  (∀x:T. p(x) ⇒ f(x)=x) ∧
+  (∀x:T. ¬p(x) ⇒ f(x)=x) ⇒
+    (∀x:T. g(f(x))=g(x));
+
+theorem T2 ⇔ 
+  (∀x:T. p(x) ⇒ f(x)=g(x)) ∧
+  (∀x:T. ¬p(x) ⇒ f(x)=g(x)) ⇒
+  (∀x:T. f(x)=g(x));
+  
+// not solvable due to limited case distinction capabilities of MESON
+theorem T10 ⇔
+    (∀x:T. if p(x) then f(x)=c1 else f(x)=c2) ∧ 
+    (∀x:T. if p(x) then g(x)=c1 else g(x)=c2) ⇒ 
+    (∀x:T. f(x) = g(x));

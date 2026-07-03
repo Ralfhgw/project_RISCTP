@@ -1,0 +1,40 @@
+// Harrison: "Handbook of Practical Logic and Theorem Proving", page 263
+type N;
+const zero:N;
+fun s(n:N):N;
+fun plus(n1:N,n2:N):N;
+fun times(n1:N,n2:N):N;
+
+axiom A ⇔
+  (∀x:N. plus(zero,x)=x) ∧
+  (∀x:N,y:N. plus(s(x),y) = s(plus(x,y))) ∧
+  (∀x:N. times(zero,x)=zero) ∧
+  (∀x:N,y:N. times(s(x),y) = plus(y,times(x,y)))
+;
+
+theorem T ⇔
+
+// all quickly solvable by SMT
+
+// problem in Harrison was just a rewriting problem, 
+// we formulate the corresponding proving problem
+
+// MESON+Equality: solved in 28 ms (equality "low", depth 20)
+plus(times(s(s(s(zero))), s(s(zero))), s(s(s(s(zero))))) =
+s(s(s(s(s(s(s(s(s(s(zero))))))))))
+
+// MESON+Equality: solved in 2ms
+// plus(s(s(s(s(s(s(zero)))))), s(s(s(s(zero))))) = 
+//      s(s(s(s(s(s(s(s(s(s(zero))))))))))
+  
+// MESON+Equality: solved in 5ms (equality "Min", depth 9)
+// times(s(s(zero)), s(s(zero))) = s(s(s(s(zero))))
+
+// MESON+Equality: solved in 10ms (equality "Min", depth 10)
+// times(s(s(s(zero))), s(zero)) = s(s(s(zero)))
+
+// MESON+Equality: solved in 10ms (equality "Min", depth 13)
+// times(s(s(s(zero))), s(s(zero))) = s(s(s(s(s(s(zero))))))
+
+;
+    

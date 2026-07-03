@@ -1,0 +1,8 @@
+// problem file "case.txt"
+type T;
+pred p(x:T);
+pred q(x:T);
+// theorem T1 ⇔ (∀x:T. p(x) ⇒ q(x)) ∧ (∀x:T. ¬p(x) ⇒ q(x)) ⇒ (∀x:T. q(x));
+axiom A1 ⇔ (∀x:T. p(x) ⇒ q(x));
+axiom A2 ⇔ (∀x:T. ¬p(x) ⇒ q(x));
+theorem T2 ⇔ (∀x:T. q(x));

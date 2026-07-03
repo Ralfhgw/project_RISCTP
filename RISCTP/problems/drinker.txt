@@ -1,0 +1,6 @@
+// the drinker's paradox
+type T;
+pred inbar(x:T);
+pred drinks(x:T);
+axiom A ⇔ ∃x:T. inbar(x);
+theorem T ⇔ ∃x:T. inbar(x) ∧ (drinks(x) ⇒ ∀y:T. inbar(y) ⇒ drinks(y));

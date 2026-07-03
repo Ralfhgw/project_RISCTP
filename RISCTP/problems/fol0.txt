@@ -1,0 +1,5 @@
+// problem file "fol0.txt"
+type T;
+pred p(x:T);
+theorem Theorem ⇔ 
+  ∀a:T. p(a) ⇒ ∃x:T. p(x); 

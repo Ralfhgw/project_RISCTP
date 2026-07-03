@@ -1,0 +1,15 @@
+// Harrison: "Handbook of Practical Logic and Theorem Proving", page 248+296
+type T;
+fun f(x:T,y:T):T;
+fun i(x:T):T;
+const c:T;
+
+// quickly solvable by SMT but, interestingly, the SMT solver cannot find
+// a proof from the clauses, only from the whole problem
+
+// can be solved in MESON with equality level "Max" and depth = 6 in 10s
+theorem T ⇔ 
+  (∀x:T,y:T,z:T. f(x,f(y,z)) = f(f(x,y),z)) ∧
+  (∀x:T. f(c,x) = x) ∧
+  (∀x:T. f(i(x),x) = c) 
+⇒ (∀x:T. f(x,i(x)) = c);

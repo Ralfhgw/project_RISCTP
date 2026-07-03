@@ -1,0 +1,10 @@
+// Harrison: "Handbook of Practical Logic and Theorem Proving", page 178
+type T;
+pred p(x:T);
+pred q(x:T);
+theorem T ⇔ 
+  ((∃x:T. ∀y:T. p(x) ⇔ p(y)) ⇔
+    ((∃x:T. q(x)) ⇔ (∀y:T. q(y))))
+  ⇔
+  ((∃x:T. ∀y:T. q(x) ⇔ q(y)) ⇔
+    ((∃x:T. p(x)) ⇔ (∀y:T. p(y))));

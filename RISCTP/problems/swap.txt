@@ -1,0 +1,17 @@
+// problem file "swap.txt"
+// theorem is proved already by problem simplification
+// one typechecking condition cannot be proved by MESON or SMT
+const N:Nat; axiom posN ⇔ N > 0;
+const M:Nat; axiom posM ⇔ M > 0;
+type Index = Nat with value < N;
+type Value = Nat with value < M;
+type Array = Map[Index,Value];
+theorem swap ⇔ 
+  ∀olda:Array, i:Index, j:Index. i < N ∧ j < N ⇒ 
+    let e1 = olda[i] in
+    let e2 = olda[j] in
+    let a = olda with [i] = e2 with [j] = e1 in 
+      a[i] = olda[j] ∧
+      a[j] = olda[i] ∧
+      ∀k:Index. k < N ∧ k ≠ i ∧ k ≠ j ⇒ a[k] = olda[k]
+;

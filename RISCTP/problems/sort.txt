@@ -1,0 +1,68 @@
+// Harrison: "Handbook of Practical Logic and Theorem Proving", page 212
+
+// integers
+type I;
+const zero:I;
+fun s(x:I):I;
+pred leq(x:I,y:I);
+
+// lists of integers
+type L;
+const nil:L;
+fun cons(x:I,y:L):L;
+pred delete(x:I,y:L,z:L);
+pred sorted(x:L);
+pred perm(x:L,y:L);
+pred sort(x:L,y:L);
+
+axiom A ⇔
+  (∀x:L,y:L. perm(x,y) ∧ sorted(y) ⇒ sort(x,y)) ∧
+  sorted(nil) ∧
+  (∀x:I. sorted(cons(x,nil))) ∧
+  (∀x:I,y:I,z:L. leq(x,y) ∧ sorted(cons(y,z)) ⇒ sorted(cons(x,cons(y,z)))) ∧
+  perm(nil,nil) ∧
+  (∀x:I,y:L,u:I,v:L,z:L. delete(u,cons(x,y),z) ∧ perm(z,v) ⇒ 
+    perm(cons(x,y),cons(u,v))) ∧
+  (∀x:I,y:L. delete(x,cons(x,y),y)) ∧
+  (∀x:I,y:I,z:L,w:L. delete(x,z,w) ⇒ delete(x,cons(y,z),cons(y,w))) ∧
+  (∀x:I. leq(zero,x)) ∧
+  (∀x:I,y:I. leq(x,y) ⇒ leq(s(x),s(y))) 
+;
+  
+theorem T ⇔ 
+
+// Z3: 50ms, RISCTP: <5ms
+// ∃x:L. sort(cons(s(zero),cons(zero,nil)), x)
+
+// Z3: timeout (60s), RISCTP: <5ms
+// ∃x:L. sort(cons(s(s(zero)),cons(s(zero),nil)), x)
+
+// Z3: timeout (60s), RISCTP: <5ms
+// ∃x:L. sort(cons(zero,cons(s(zero),nil)), x)
+
+// Z3: 40ms, RISCTP: <5ms
+// ∃x:L. sort(cons(zero,cons(zero,cons(zero,nil))), x)
+
+// Z3: timeout (60s), RISCTP: 400ms (proof too big)
+// ∃x:L. sort(cons(zero,cons(zero,cons(s(zero),nil))), x)
+
+// Z3: timeout (60s), RISCTP: 800ms (proof too big)
+// ∃x:L. sort(cons(zero,cons(s(zero),cons(zero,nil))), x)
+
+// Z3: timeout (60s), RISCTP: <5ms (proof too big)
+// ∃x:L. sort(cons(s(zero),cons(s(zero),cons(zero,nil))), x)
+
+// Z3: timeout (60s), RISCTP: <5ms
+
+// Z3: timeout (60s), RISCTP: < 5ms
+// ∃x:L. sort(cons(s(s(zero)),cons(s(zero),cons(s(s(s(zero))),nil))), x)
+
+// from the book
+// Z3: timeout (60s), RISCTP: <40ms (depth 7)
+    ∃x:L. sort(
+      cons(s(s(s(s(zero)))),
+        cons(s(zero),
+          cons(zero,
+            cons(s(s(zero)),
+              cons(s(zero), nil))))), x)
+;

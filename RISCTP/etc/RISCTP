@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# allow overriding the Java executable via environment variable
+JAVA="${JAVA:-$(command -v java 2>/dev/null)}"
+
+# resolve the installation relative to this launcher
+SCRIPT_DIR="$(CDPATH= cd -- "$(dirname "$0")" && pwd)"
+RISCTP="${RISCTP_HOME:-$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)}"
+LIB="$RISCTP/lib"
+Z3="${RISCTP_Z3:-$RISCTP/etc/z3}"
+
+if [ -z "$JAVA" ]; then
+  echo "Error: Java runtime not found. Set JAVA or install java." >&2
+  exit 127
+fi
+
+exec "$JAVA" -cp "$LIB/*" risctp.Main -path "$Z3" "$@"

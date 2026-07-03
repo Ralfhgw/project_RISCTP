@@ -1,0 +1,11 @@
+// Harrison: "Handbook of Practical Logic and Theorem Proving", page 241
+type T;
+pred p(x:T);
+pred q(x:T);
+
+// requires equality "low"
+theorem T ⇔ 
+  (∀x:T. p(x) ⇒ q(x)) ∧
+  (∃x:T. p(x)) ∧
+  (∀x:T,y:T. q(x) ∧ q(y) ⇒ x = y)
+⇒ (∀y:T. q(y) ⇒ p(y));

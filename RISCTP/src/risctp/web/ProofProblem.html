@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>RISCTP</title>
+
+<!-- CSS =================================================================== -->
+<style>
+
+html {
+height: 95%;
+font-family: sans-serif;
+}
+
+body {
+height: 95%;
+}
+
+div.top {
+  height: 13%;
+  background: url(https://risc.jku.at/wp-content/uploads/2018/01/risc-logo-300.png) 
+  no-repeat right;
+  background-size: auto 80%;
+}
+
+div.top1 {
+  height: 38%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+div.top2 {
+  height: 30%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+div.top3 {
+  height: 30%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+span.top {
+  display: flex;
+  align-items: start;
+  gap: 10px;
+}
+
+span.top1 {
+  display: flex;
+  align-items: start;
+  gap: 10px;
+}
+
+span.top2 {
+  display: flex;
+  align-items: start;
+  gap: 10px;
+}
+
+span.group {
+  border-radius:4px;
+  background-color:#f4f4f4;
+  border:1px solid lightgrey;
+  padding:3px 3px 3px 3px;
+  font-size: 14px;
+}
+
+span.group2 {
+  border-radius:4px;
+  background-color:#f4f4f4;
+  border:1px solid lightgrey;
+  padding:3px 3px 3px 3px;
+  font-size: 14px;
+}
+
+input {
+  margin: 0px 0px 0px 2px;
+}
+
+div.row {
+  height: 96%;
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  gap: 10px;
+}
+
+div.left {
+  border-style: solid;
+  border-width: 1px;
+  padding: 0px 5px 0px 5px;
+  display: inline-block;
+  overflow: auto;
+  resize: horizontal;
+  flex: 0 0 auto;
+  min-width: 20%;
+  max-width: 80%;
+}
+
+div.right {
+  border-style: solid;
+  border-width: 1px;
+  padding: 5px 5px 5px 5px;
+  display: inline-block;
+  overflow: auto;
+  flex: 1 1 auto;
+}
+
+.header {
+  display: inline;
+}
+
+.tag {
+  color: purple;
+  cursor: pointer;
+}
+
+.link {
+  color: blue;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.formula {
+  white-space: nowrap;
+}
+
+dl {
+  margin: 0;
+}
+
+dt {
+  margin: 1em 0 1em 0;
+  padding: 0 0 0 0em;
+}
+
+dd {
+  margin: 1em 0 1em 0;
+  padding: 0 0 0 1em;
+} 
+
+#treelist {
+  margin-left: -0.5em;
+}
+
+dl.tree {
+  margin: 0;
+}
+
+dt.tree {
+  margin: 0;
+}
+
+dd.tree {
+  margin: 0;
+  padding: 0 0 0 1em;
+  white-space: nowrap;
+} 
+
+dl.problem {
+  margin: 0;
+}
+
+dt.problem {
+  margin: 0;
+}
+
+span.tree {
+  white-space: nowrap;
+}
+
+@keyframes blink {
+  to {
+    visibility: hidden;
+  }
+}
+
+pre {
+  font-size: 16px;
+  margin: 0;
+}
+
+button {
+  font-size: 14px;
+}
+
+select {
+  font-size: 14px;
+}
+
+input {
+  font-size: 14px;
+}
+
+ol {
+  padding-left: 2em;
+}
+
+</style>
+
+<!-- JavaScript =========================================================== -->
+<script>
+//<![CDATA[
+
+// hide by click on tag with id <tid> element with id <eid>
+function hide(tid,eid) 
+{
+  var tag = document.getElementById(tid);
+  var element = document.getElementById(eid);
+  var hidden = element.getAttribute('hidden');
+  if (hidden == null)
+  {
+    element.setAttribute('hidden', true);
+    tag.textContent = '[+]';
+  }
+  else
+  {
+    element.removeAttribute('hidden');
+    tag.textContent = '[‑]';
+  }
+}
+
+// show *content* of element with id <id> in display, if <scroll> scroll to bottom
+function show(id, scroll) 
+{
+  var element = document.getElementById(id);
+  var display = document.getElementById('display');
+  display.innerHTML = element.innerHTML;
+  if (scroll) display.scrollTo(0, display.scrollHeight);
+}
+
+// show *all* of element with id <id> in display, if <scroll> scroll to bottom
+function showOuter(id, scroll) {
+  var element = document.getElementById(id);
+  var out = document.getElementById('display');
+  out.innerHTML = element.outerHTML;
+  if (scroll) out.scrollTo(0, out.scrollHeight);
+}
+
+// load selected file into variable <fileContent>, source field, and display
+var fileContent = "";
+function loadFile()
+{
+  clearAll();
+  var files = document.getElementById('file').files;
+  if (files.length == 0) return;
+  var file = files[0];
+  var reader = new FileReader();
+  reader.readAsArrayBuffer(file);
+  reader.onload = function(fileData) {
+    var source = document.getElementById('source');
+    var content = fileData.target.result;
+    fileContent = new TextDecoder('utf8').decode(content);
+    if (fileContent == '') fileContent = '(empty file)';
+    source.innerHTML = fileContent;
+    showOuter('source', false);
+  }
+}
+
+// get options from server to set the corresponding fields
+function getOptions()
+{
+  var request = new XMLHttpRequest();
+  request.onreadystatechange = function() 
+  { 
+    if (request.readyState == request.DONE && request.status == 200)
+    {
+      var text = request.responseText;
+      if (text != '')
+      {
+        var options = document.createDocumentFragment();
+        var root = document.createElement('div');
+        options.appendChild(root);
+        root.innerHTML = text;
+        var mode0 = options.getElementById('option_mode');
+        var mode = document.getElementById('mode');
+        mode.value = mode0.value;
+        var method0 = options.getElementById('option_method');
+        var smt = document.getElementById('smt');
+        var me = document.getElementById('me');
+        var res = document.getElementById('res');
+        if (method0.value == "1") smt.checked="true";
+        else if (method0.value == "2") me.checked="true";
+        else if (method0.value == "3") res.checked="true";
+        meOptions(false); resOptions(false);
+        if (me.checked) meOptions(me.checked);
+        else if (res.checked) resOptions(res.checked);
+        var timeout0 = options.getElementById('option_timeout');
+        var timeout = document.getElementById('timeout');
+        if (timeout0.value != '' && parseInt(timeout0.value) >= 0) 
+        timeout.value = parseInt(timeout0.value)/1000;
+        var multithreaded0 = options.getElementById('option_multithreaded');
+        var multithreaded = document.getElementById('multithreaded');
+        multithreaded.removeAttribute('checked');
+        if (multithreaded0.value == 'true') multithreaded.checked = 'true'; 
+        var threads0 = options.getElementById('option_threads');
+        var threads = document.getElementById('threads');
+        if (threads0.value != '' && parseInt(threads0.value) >= 0) 
+        threads.value = parseInt(threads0.value);
+        var expand0 = options.getElementById('option_expand');
+        var expand = document.getElementById('expand');
+        expand.removeAttribute('checked');
+        if (expand0.value == 'true') expand.checked = 'true'; 
+        var axints0 = options.getElementById('option_intAxioms');
+        var axints = document.getElementById('axints');
+        axints.removeAttribute('checked'); 
+        if (axints0.value == 'true') axints.checked = 'true';
+        var axnonlinear0 = options.getElementById('option_nonLinearAxioms');
+        var axnonlinear = document.getElementById('axnonlinear');
+        axnonlinear.removeAttribute('checked'); 
+        if (axnonlinear0.value == 'true') axnonlinear.checked = 'true';
+        var axmaps0 = options.getElementById('option_mapAxioms');
+        var axmaps = document.getElementById('axmaps');
+        axmaps.removeAttribute('checked'); 
+        if (axmaps0.value == 'true') axmaps.checked = 'true';
+        var axdata0 = options.getElementById('option_dataAxioms');
+        var axdata = document.getElementById('axdata');
+        axdata.removeAttribute('checked'); 
+        if (axdata0.value == 'true') axdata.checked = 'true';
+        var mesonEq0 = options.getElementById('option_mesonEquality');
+        var mesonEqOff = document.getElementById('meeqoff');
+        var mesonEqLow = document.getElementById('meeqlow');
+        var mesonEqMed = document.getElementById('meeqmed');
+        var mesonEqHigh = document.getElementById('meeqhigh');
+        var mesonEqMax = document.getElementById('meeqmax');
+        if (mesonEq0.value == '0') mesonEqOff.checked = 'true';
+        else if (mesonEq0.value == '1') mesonEqLow.checked = 'true';
+        else if (mesonEq0.value == '2') mesonEqMed.checked = 'true';
+        else if (mesonEq0.value == '3') mesonEqHigh.checked = 'true';
+        else if (mesonEq0.value == '4') mesonEqMax.checked = 'true';
+        var mesonSMT0 = options.getElementById('option_mesonSMT');
+        var mesonSMTOff = document.getElementById('mesmtoff');
+        var mesonSMTMin = document.getElementById('mesmtmin');
+        var mesonSMTMed = document.getElementById('mesmtmed');
+        var mesonSMTMax = document.getElementById('mesmtmax');
+        if (mesonSMT0.value == '0') mesonSMTOff.checked = 'true';
+        else if (mesonSMT0.value == '1') mesonSMTMin.checked = 'true';
+        else if (mesonSMT0.value == '2') mesonSMTMed.checked = 'true';
+        else if (mesonSMT0.value == '3') mesonSMTMax.checked = 'true';
+        var mesonDisplay0 = options.getElementById('option_mesonDisplay');
+        var mesonDisplayNone = document.getElementById('tnone');
+        var mesonDisplayProblems = document.getElementById('tproblems');
+        var mesonDisplayProof = document.getElementById('tproof');
+        var mesonDisplaySearch = document.getElementById('tsearch');
+        if (mesonDisplay0.value == '0') mesonDisplayNone.checked = 'true';
+        else if (mesonDisplay0.value == '1') mesonDisplayProblems.checked = 'true';
+        else if (mesonDisplay0.value == '2') mesonDisplayProof.checked = 'true';
+        else if (mesonDisplay0.value == '3') mesonDisplaySearch.checked = 'true';
+        var mesonDepth0 = options.getElementById('option_mesonDepth');
+        var mesonDepth = document.getElementById('ldepth');
+        var mesonSize = document.getElementById('lsize');
+        if (mesonDepth0.value == 'true') mesonDepth.checked = 'true';
+        else if (mesonDepth0.value == 'false') mesonDepth.checked = 'false';
+        var mesonLimit0 = options.getElementById('option_mesonLimit');
+        var mesonLimit = document.getElementById('limit');
+        if (mesonLimit0.value != '' && parseInt(mesonLimit0.value) >= 0) 
+          mesonLimit.value = mesonLimit0.value; 
+        var mesonIterate0 = options.getElementById('option_mesonIterate');
+        var mesonIterate = document.getElementById('liter');
+        mesonIterate.removeAttribute('checked'); 
+        if (mesonIterate0.value == 'true') mesonIterate.checked = 'true';
+        var mesonSingle0 = options.getElementById('option_mesonSingle');
+        var mesonSingle = document.getElementById('lsingle');
+        mesonSingle.removeAttribute('checked'); 
+        if (mesonSingle0.value == 'true') mesonSingle.checked = 'true';
+        var resSMT0 = options.getElementById('option_resSMT');
+        var resSMTOff = document.getElementById('ressmtoff');
+        var resSMTOn = document.getElementById('ressmton');
+        if (resSMT0.value == 'true') { resSMTOn.checked = 'true'; resSMTOff.checked = 'false'; }
+        else if (resSMT0.value == 'false') { resSMTOn.checked = 'false'; resSMTOff.checked = 'true'; }
+      }
+    }
+  }
+  request.open("GET", "/options", true);
+  request.send(null);
+}
+
+// get text file from server into variable <fileContent>, source field, and display
+function getFile()
+{
+  var request = new XMLHttpRequest();
+  request.onreadystatechange = function() 
+  { 
+    if (request.readyState == request.DONE && request.status == 200)
+    {
+      var text = request.responseText;
+      if (text != '')
+      {
+        fileContent = text;
+        var source = document.getElementById('source');
+        source.innerText = fileContent;
+        showOuter('source', false);
+      }
+    }
+  }
+  request.open("GET", "/file", true);
+  request.send(null);
+}
+
+// set HTML content of element denoted by 'id' to 'text'
+function setHTML(id,text)
+{
+  var element = document.getElementById(id);
+  element.innerHTML = text;
+}
+
+// clear all user interface elements
+function clearAll()
+{
+  var status = document.getElementById('status');
+  status.style.color = 'black';
+  setHTML('status', 'None');
+  setHTML('display', '');
+  setHTML('output', '(no output)');
+  setHTML('source', '(no file)');
+  setHTML('problem', '(no problem)');
+  setHTML('treelist', '');
+  setHTML('problems', '');
+  setHTML('cproblems', '');
+  setHTML('oproblems', '');
+  setHTML('psearch', '');
+  setHTML('proofs', '');
+  showOuter('source', false);
+}
+
+// recursively apply <func> to every node of DOM tree rooted in <node>
+function walkDOM(node,func) 
+{
+  func(node);                    
+  var node = node.firstChild;
+  while (node) 
+  {
+    walkDOM(node,func);
+    node = node.nextSibling;
+  }
+}
+
+// indicate that element <elem> has been clicked
+function visitLink(elem)
+{
+  walkDOM(document.documentElement, function(node)
+  {
+    if (node.className != 'link') return;
+    if (node == elem)
+      node.style.color = 'red';
+    else
+      node.style.color = 'blue';
+  });
+}
+
+// execution status of RISCTP (currently running, abort requested)
+var running = false;
+var aborted = false;
+
+// indicate that "Prove" button has been clicked
+function run()
+{
+  if (running) { abort(); return; }
+  running = true;
+  var button = document.getElementById('run');
+  button.textContent = 'Abort';
+  button.style.color = 'red';
+  var status = document.getElementById('status');
+  status.textContent = 'Running';
+  status.style.color = 'orange';
+  status.style.animation ='blink 1.5s steps(5, start) infinite';
+  sendRunRequest();
+  getNext();
+}
+
+// send execution request to server
+function sendRunRequest()
+{
+  var formData = new FormData();
+  formData.append("file", fileContent);
+  var mode = document.getElementById("mode");
+  formData.append("mode", mode.value);
+  var decompose = document.getElementById("decompose");
+  formData.append("decompose", decompose.checked);
+  var smt = document.getElementById("smt");
+  formData.append("smt", smt.checked);
+  var me = document.getElementById("me");
+  formData.append("me", me.checked);
+  var res = document.getElementById("res");
+  formData.append("res", res.checked);
+  var expand = document.getElementById("expand");
+  formData.append("expand", expand.checked);
+  var mesmtoff = document.getElementById("mesmtoff");
+  formData.append("mesmtoff", mesmtoff.checked);
+  var mesmtmin = document.getElementById("mesmtmin");
+  formData.append("mesmtmin", mesmtmin.checked);
+  var mesmtmed = document.getElementById("mesmtmed");
+  formData.append("mesmtmed", mesmtmed.checked);
+  var mesmtmax = document.getElementById("mesmtmax");
+  formData.append("mesmtmax", mesmtmax.checked);
+  var meeqoff = document.getElementById("meeqoff");
+  formData.append("meeqoff", meeqoff.checked);
+  var meeqlow = document.getElementById("meeqlow");
+  formData.append("meeqlow", meeqlow.checked);
+  var meeqmed = document.getElementById("meeqmed");
+  formData.append("meeqmed", meeqmed.checked);
+  var meeqhigh = document.getElementById("meeqhigh");
+  formData.append("meeqhigh", meeqhigh.checked);
+  var meeqmax = document.getElementById("meeqmax");
+  formData.append("meeqmax", meeqmax.checked);
+  var ressmt = document.getElementById("ressmton");
+  formData.append("ressmt", ressmton.checked);
+  var axints = document.getElementById("axints");
+  formData.append("axints", axints.checked);
+  var axnonlinear = document.getElementById("axnonlinear");
+  formData.append("axnonlinear", axnonlinear.checked);
+  var axmaps = document.getElementById("axmaps");
+  formData.append("axmaps", axmaps.checked);
+  var axdata = document.getElementById("axdata");
+  formData.append("axdata", axdata.checked);
+  var tproblems = document.getElementById("tproblems");
+  formData.append("tproblems", tproblems.checked);
+  var tnone = document.getElementById("tnone");
+  formData.append("tnone", tnone.checked);
+  var tproof = document.getElementById("tproof");
+  formData.append("tproof", tproof.checked);
+  var tsearch = document.getElementById("tsearch");
+  formData.append("tsearch", tsearch.checked);
+  // var gpsearch = document.getElementById("gpsearch");
+  // formData.append("gpsearch", gpsearch.checked);
+  // var gproofs = document.getElementById("gproofs");
+  // formData.append("gproofs", gproofs.checked);
+  var timeout = document.getElementById("timeout");
+  formData.append("timeout", timeout.value);
+  var multithreaded = document.getElementById("multithreaded");
+  formData.append("multithreaded", multithreaded.checked);
+  var threads = document.getElementById("threads");
+  formData.append("threads", threads.value);
+  var ldepth = document.getElementById("ldepth");
+  formData.append("ldepth", ldepth.checked);
+  var lsize = document.getElementById("lsize");
+  formData.append("lsize", lsize.checked);
+  var limit = document.getElementById("limit");
+  formData.append("limit", limit.value);
+  var liter = document.getElementById("liter");
+  formData.append("liter", liter.checked);
+  var lsingle = document.getElementById("lsingle");
+  formData.append("lsingle", lsingle.checked);
+  var request = new XMLHttpRequest();
+  request.open("POST", "/run", true);
+  request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  request.send(urlencodeFormData(formData));
+}
+
+// Encode form data in urlencoded format
+// https://stackoverflow.com/questions/7542586/new-formdata-application-x-www-form-urlencoded
+function urlencodeFormData(fd)
+{
+  var params = new URLSearchParams();
+  for (var pair of fd.entries())
+  {
+    if (typeof pair[1]=='string') params.append(pair[0], pair[1]);
+  }
+  return params.toString();
+}
+
+// indicate that "Abort" button has been clicked
+function abort()
+{
+  aborted = true;
+  var request = new XMLHttpRequest();
+  request.open("GET", "/abort", true);
+  request.send(null);
+}
+
+// indicate that execution has stopped
+function stop(done)
+{
+  running = false;
+  aborted = false;
+  var button = document.getElementById('run');
+  button.textContent = 'Prove';
+  button.style.color = 'black';
+  var status = document.getElementById('status');
+  if (done == 'true')
+  {
+    status.textContent = 'Success';
+    status.style.color = 'blue';
+  }
+  else
+  {
+    status.textContent = 'Failure';
+    status.style.color = 'red';
+  }
+  status.style.animation = '';
+}
+
+// process contents <elements> of received document fragment
+function process(elements)
+{
+  for (var element of elements)
+  {
+    if (element.nodeType !== Node.ELEMENT_NODE) continue;
+    var id = element.id;
+    var parent = document.getElementById(id);
+    if (parent == null) continue;
+    var action = element.getAttribute('class');
+    if (action == 'replaceChildren') 
+        parent.replaceChildren();
+    var children = element.childNodes;
+    for (var child of children) { parent.appendChild(child); }
+  }
+}
+
+// periodically send request for next document fragment with delay <DELAY> (ms)
+var DELAY = 10;
+function getNext()
+{
+  var request = new XMLHttpRequest();
+  request.onreadystatechange = function() 
+  { 
+    if (request.readyState == request.DONE && request.status == 200)
+    {
+      var text = request.responseText;
+      var result = document.createDocumentFragment();
+      var element = document.createElement('div');
+      result.appendChild(element);
+      element.innerHTML = text;
+      var root = result.querySelector('root');
+      if (root == null) return;
+      process(root.children);
+      var done = root.getAttribute('done');
+      if (done != null) { stop(done); return; }
+      // if (aborted) { stop('false'); return; }
+      setTimeout(getNext, DELAY);
+    }
+  }
+  request.open("GET", "/next", true);
+  request.send(null);
+}
+
+function meOptions(show)
+{
+  var value = show ? "" : "none";
+  document.getElementById("expandspan").style.display = value;
+  document.getElementById("axioms").style.display = value;
+  document.getElementById("mesmtspan").style.display = value;
+  document.getElementById("meeqspan").style.display = value;
+  document.getElementById("medisplay").style.display = value;
+  document.getElementById("melimit").style.display = value;
+  document.getElementById("mesingle").style.display = value;
+}
+
+function resOptions(show)
+{
+  var value = show ? "" : "none";
+  document.getElementById("expandspan").style.display = value;
+  document.getElementById("axioms").style.display = value;
+  document.getElementById("ressmtspan").style.display = value;
+}
+
+window.onload = function () 
+{
+  var me = document.getElementById("me");
+  meOptions(false);
+  resOptions(false);
+  if (me.checked) meOptions(me.checked);
+  else if (res.checked) resOptions(res.checked);
+  getOptions();
+  getFile();
+}
+
+//]]>
+</script> 
+
+</head>
+
+<!-- HTML ================================================================== -->
+<body>
+
+<div id="top" class="top">
+
+<div id="top1" class="top1">
+<h1 class="header">RISCTP</h1>
+<button onclick="loadFile();" style="display:none" hidden="">Reload</button> 
+<input type="file" id="file" name="file" autocomplete="off" onload="this.value=null;" onclick="clearAll();this.value=null;" onchange="loadFile();"></input>
+</div>
+
+<div id="top2" class="top2">
+
+<button id="run" onclick="run();">Prove</button>
+
+<select name="mode" id="mode">
+  <option value="0">Only Type-Checking Theorems</option>
+  <option value="1">Without Type-Checking Theorems</option>
+  <option value="2" selected="">With Type-Checking Theorems</option>
+</select> 
+
+<span class="group" id="method">
+    Method:
+    <input type="radio" id="smt" name="method" value="SMT" onchange="meOptions(false);resOptions(false);"></input>
+    <label for="smt">SMT</label> 
+    <input type="radio" id="me" name="method" value="ME" checked="" onchange="resOptions(false);meOptions(true);"></input>
+    <label for="me">MESON</label>
+    <input type="radio" id="res" name="method" value="RES" onchange="meOptions(false);resOptions(true);"></input>
+    <label for="res">RES</label>
+</span>
+
+<span class="group">
+    <label for="timeout">Timeout (s): </label>
+    <input type="number" pattern="\d*" value="60" min="0" step="10" id="timeout" name="timeout" 
+     style = "width:50px;"></input>
+</span>
+
+<span class="group">
+    Multi-Threaded:
+    <input type="checkbox" id="multithreaded" name="multithreaded"></input>
+    Threads:
+    <input type="number" pattern="\d*" value="2" min="0" step="1" id="threads" name="threads" 
+     style = "width:40px;"></input>
+</span>
+
+</div>
+
+<div id="top3" class="top3">
+
+<span id="expandspan" class="group2">
+Expand: 
+<input type="checkbox" id="expand" name="expand" value="expand" checked="true"></input>
+</span>
+
+<span id="axioms" class="group2">
+    Axioms: 
+    <input type="checkbox" id="axints" name="axints" checked="true"></input>
+    <label for="axints">Int+</label>
+    <input type="checkbox" id="axnonlinear" name="axnonlinear" checked="false"></input>
+    <label for="axnonlinear">Int*</label>
+    <input type="checkbox" id="axmaps" name="axmaps" checked="true"></input>
+    <label for="axmaps">Maps</label>
+    <input type="checkbox" id="axdata" name="axdata" checked="true"></input>
+    <label for="axdata">Data</label>
+</span>
+
+<span id = "meeqspan" class="group2">
+Equality: 
+<input type="radio" id="meeqoff" name="meeqgroup" value="meeqoff"></input>
+<label for="meeqoff">Off</label> 
+<input type="radio" id="meeqlow" name="meeqgroup" value="meeqlow" checked="true"></input>
+<label for="meeqlow">Low</label> 
+<input type="radio" id="meeqmed" name="meeqgroup" value="meeqmed"></input>
+<label for="meeqmed">Med</label> 
+<input type="radio" id="meeqhigh" name="meeqgroup" value="meeqhigh"></input>
+<label for="meeqhigh">High</label> 
+<input type="radio" id="meeqmax" name="meeqgroup" value="meeqmax"></input>
+<label for="meeqmax">Max</label> 
+</span>
+
+<span id = "mesmtspan" class="group2">
+SMT: 
+<input type="radio" id="mesmtoff" name="mesmtgroup" value="mesmtoff" checked="true"></input>
+<label for="mesmtoff">Off</label> 
+<input type="radio" id="mesmtmin" name="mesmtgroup" value="mesmtmin"></input>
+<label for="mesmtmin">Min</label> 
+<input type="radio" id="mesmtmed" name="mesmtgroup" value="mesmtmed"></input>
+<label for="mesmtmed">Med</label> 
+<input type="radio" id="mesmtmax" name="mesmtgroup" value="mesmtmax"></input>
+<label for="mesmtmax">Max</label> 
+</span>
+
+<span id="medisplay" class="group2">
+    Display:
+    <input type="radio" id="tnone" name="trees" value="tnone" style="display:none;"></input>
+    <label for="tnone" style="display:none;">None</label> 
+    <input type="radio" id="tproblems" name="trees" value="tproblems"></input>
+    <label for="tproblems">Problems</label> 
+    <input type="radio" id="tproof" name="trees" value="tproof" checked=""></input>
+    <label for="tproof">Proofs</label>
+    <input type="radio" id="tsearch" name="trees" value="tsearch"></input>
+    <label for="tsearch">Search</label>
+</span>
+
+<span style="display:none">
+<label for="decompose">Decompose:</label>
+<input type="checkbox" id="decompose" name="decompose" value="decompose" checked=""></input>
+</span>
+
+<span style="display:none">
+<label for="gpsearch">Proof Search:</label>
+<input type="checkbox" id="gpsearch" name="gpsearch" value="gpsearch" checked=""></input>
+</span>
+
+<span style="display:none">
+<label for="gproofs">Proofs:</label>
+<input type="checkbox" id="gproofs" name="gproofs" value="gproofs" checked=""></input>
+</span>
+
+<span id="melimit" class="group2">
+    Limit:
+    <input type="radio" id="ldepth" name="loption" value="ldepth" checked=""></input>
+    <label for="ldepth">Depth</label> 
+    <input type="radio" id="lsize" name="loption" value="lsize"></input>
+    <label for="lsize">Size</label>
+    <label for="lsize"> &#x00A0; </label>
+    <input type="number" pattern="\d*" value="7" min="0" step="1" id="limit" name="limit" 
+     style = "width:40px;"></input>
+    <input type="checkbox" id="liter" name="liter" checked=""></input>
+    <label for="liter">Iterate</label>
+</span>
+
+<span id="mesingle" class="group2">
+    <input type="checkbox" id="lsingle" name="lsingle" checked=""></input>
+    <label for="lsingle">Single Goal</label>
+</span>
+
+<span id = "ressmtspan" class="group2">
+SMT: 
+<input type="radio" id="ressmtoff" name="ressmtgroup" value="ressmtoff" checked="true"></input>
+<label for="ressmtoff">Off</label> 
+<input type="radio" id="ressmton" name="ressmtgroup" value="ressmton"></input>
+<label for="ressmton">On</label> 
+</span>
+
+</div>
+
+</div>
+
+<div class="row">
+
+<div class="left">
+
+<p>
+<h3 class="header">Proof Status: <span id="status">None</span></h3>
+</p>
+
+<dl>
+
+<dt> <a class="link" onclick="showOuter('output',true);visitLink(this);">Prover Output</a></dt>
+<div hidden=""><pre id="output">(no output)</pre></div>
+
+<hr/>
+
+<dt> <a class="link" onclick="showOuter('source',false);visitLink(this);">Input File</a></dt>
+<div hidden=""><pre id="source">(no file)</pre></div>
+
+<dt> <a class="link" onclick="showOuter('problem',false);visitLink(this);">Proof Problem</a></dt>
+<div hidden=""><pre id="problem">(no problem)</pre></div>
+
+<dt> <span id="tagtreelist" class="tag" onclick="hide('tagtreelist','treelist');">[-]</span> 
+<b>Problem Simplification:</b></dt>
+<dd>
+<dl id="treelist">
+</dl> 
+</dd>
+
+<span style="display:none;">
+<dt> <span id="tagproblems" class="tag" onclick="hide('tagproblems','problems');">[-]</span>
+<b>Open Problems (Files):</b></dt>
+<dd>
+<dl id="problems">
+</dl>
+</dd>
+</span>
+
+<dt> <span id="tagoproblems" class="tag" onclick="hide('tagoproblems','oproblems');">[-]</span>
+<b>Subproblems:</b></dt>
+<dd>
+<ol id="oproblems">
+</ol>
+</dd>
+
+<dt> <span id="tagcproblems" class="tag" onclick="hide('tagcproblems','cproblems');">[-]</span>
+<b>Clause Forms:</b></dt>
+<dd>
+<ol id="cproblems">
+</ol>
+</dd>
+
+<dt> <span id="tagproofs" class="tag" onclick="hide('tagproofs','proofs');">[-]</span>
+<b>Proofs:</b></dt>
+<dd>
+<ol id="proofs">
+</ol>
+</dd>
+
+<dt> <span id="tagpsearch" class="tag" onclick="hide('tagpsearch','psearch');">[-]</span>
+<b>Proof Search:</b></dt>
+<dd>
+<ol id="psearch">
+</ol>
+</dd>
+
+</dl>
+
+</div>
+
+<div id="display" class="right">
+
+<p>
+<h1 class="header"> RISCTP</h1>
+</p>
+
+<div>
+<pre>
+RISC Theorem Proving Interface
+https://www.risc.jku.at/research/formal/software/RISCTP
+(C) 2022-, Research Institute for Symbolic Computation (RISC)
+This is free software distributed under the terms of the GNU GPL.
+Execute "RISCTP -h" to see the available command line options.
+-----------------------------------------------------------------
+</pre>
+</div>
+
+<p>
+Load a file with a RISCTP proof problem and press "Prove" to start the prover.<br/>
+Click in the left pane to inspect the proof status (even while the prover is still running).
+</p>
+
+</div>
+
+</div>
+
+</body>
+</html> 

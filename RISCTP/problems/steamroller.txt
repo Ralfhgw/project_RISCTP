@@ -1,0 +1,36 @@
+// Harrison: "Handbook of Practical Logic and Theorem Proving", page 223
+
+type T;
+pred p0(x:T);
+pred p1(x:T);
+pred p2(x:T);
+pred p3(x:T);
+pred p4(x:T);
+pred p5(x:T);
+pred q0(x:T);
+pred q1(x:T);
+pred r(x:T,y:T);
+pred s0(x:T,y:T);
+
+theorem T ⇔ 
+  (∀x:T. p1(x) ⇒ p0(x)) ∧ (∃x:T. p1(x)) ∧
+  (∀x:T. p2(x) ⇒ p0(x)) ∧ (∃x:T. p2(x)) ∧
+  (∀x:T. p3(x) ⇒ p0(x)) ∧ (∃x:T. p3(x)) ∧
+  (∀x:T. p4(x) ⇒ p0(x)) ∧ (∃x:T. p4(x)) ∧
+  (∀x:T. p5(x) ⇒ p0(x)) ∧ (∃x:T. p5(x)) ∧
+  (∃x:T. q1(x)) ∧ (∀x:T. q1(x) ⇒ q0(x)) ∧
+  (∀x:T. p0(x) ⇒
+    (∀y:T. q0(y) ⇒ r(x,y)) ∨
+    ((∀y:T. p0(y) ∧ s0(y,x) ∧ (∃z:T. q0(z) ∧ r(y,z)) ⇒ r(x,y)))) ∧
+  (∀x:T,y:T. p3(y) ∧ (p5(x) ∨ p4(x)) ⇒ s0(x,y)) ∧
+  (∀x:T,y:T. p3(x) ∧ p2(y) ⇒ s0(x,y)) ∧
+  (∀x:T,y:T. p2(x) ∧ p1(y) ⇒ s0(x,y)) ∧
+  (∀x:T,y:T. p1(x) ∧ (p2(y) ∨ q1(y)) ⇒ ¬r(x,y)) ∧
+  (∀x:T,y:T. p3(x) ∧ p4(y) ⇒ r(x,y)) ∧
+  (∀x:T,y:T. p3(x) ∧ p5(y) ⇒ ¬r(x,y)) ∧
+  (∀x:T. (p4(x) ∨ p5(x)) ⇒ ∃y:T. q0(y) ∧ r(x,y)) 
+⇒ 
+  (∃y:T,z:T. q1(z) ∧ r(y,z))
+  // (∃x:T,y:T. p0(x) ∧ p0(y) ∧ ∃z:T. q1(z) ∧ r(x,y))
+  // (∃x:T,y:T. p0(x) ∧ p0(y) ∧ ∃z:T. q1(z) ∧ r(y,z) ∧ r(x,y))
+;

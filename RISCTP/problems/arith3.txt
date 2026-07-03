@@ -1,0 +1,3 @@
+// problem file "arith3.txt"
+theorem T0 ⇔ ∀i:Int,j:Int.  j < i+1 ⇔ ¬(i < j);
+theorem T1 ⇔ ∀i:Int,j:Int. ¬(j < i) ∧ (j < i+1) ⇒ j = i;

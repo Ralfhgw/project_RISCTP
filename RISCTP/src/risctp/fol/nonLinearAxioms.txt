@@ -1,0 +1,15 @@
+// multiplication
+// axiom 'comm*' ⇔ ∀x:Int,y:Int. x⋅y = y⋅x;
+// axiom 'assoc*' ⇔ ∀x:Int,y:Int,z:Int. x⋅(y⋅z) = (x⋅y)⋅z;
+// axiom 'neut*' ⇔ ∀x:Int. x⋅1 = x;
+// axiom 'absorb*' ⇔ ∀x:Int. x⋅0 = 0;
+// axiom 'distrib*' ⇔ ∀x:Int,y:Int,z:Int. x⋅(y+z) = (x⋅y)+(x⋅z);
+
+// division (very incomplete)
+// axiom 'div2a1' ⇔ ∀x:Int. (x+x)/2 = x;
+// axiom 'div2a2' ⇔ ∀x:Int,y:Int. x = y ⇒ let z = (x+y)/2 in z = x ∧ z = y;
+// axiom 'div2b' ⇔ ∀x:Int,y:Int. x < y ⇒ let z = (x+y)/2 in x ≤ z ∧ z < y;
+// this formulation allows proofs without equality rewriting
+axiom 'div2a' ⇔ ∀x:Int,y:Int. let z = (x+y)/2 in x ≤ y ⇒
+  ('='(x,y) {*} ∧ z = x ∧ z = y) ∨ (x < y ∧ x ≤ z ∧ z < y);
+axiom 'div2b' ⇔ ∀x:Int,y:Int. let z = (x+y)/2 in x ≤ y ⇒ x ≤ z ∧ z ≤ y;

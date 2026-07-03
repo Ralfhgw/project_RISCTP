@@ -1,0 +1,165 @@
+-----------------------------------------------------------------------------
+README
+Information on RISCTP.
+
+Author: Wolfgang Schreiner <Wolfgang.Schreiner@risc.jku.at>
+Copyright (C) 2022-, Research Institute for Symbolic Computation (RISC)
+Johannes Kepler University, Linz, Austria, https://www.risc.jku.at
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+------------------------------------------------------------------------------
+
+The RISCTP Theorem Proving Interface
+====================================
+https://www.risc.jku.at/research/formal/software/RISCTP
+
+The RISCTP theorem proving interface consists of a language for specifying proof
+problems and of an associated software for solving these problems. The RISCTP
+language is a typed variant of first-order logic whose level of abstraction is
+between that of higher level formal specification languages (such as the
+language of the RISCAL model checker) and lower level theorem proving languages
+(such as the language SMT-LIB supported by various satisfiability modulo
+theories solvers and theorem provers such as Z3, cvc5, or Vampire). Thus the
+RISCTP language can serve as an intermediate layer that simplifies the
+connection of specification and verification systems to theorem provers; in
+fact, it was developed to equip the RISCAL model checker with theorem proving
+capabilities.
+
+The RISCTP software is implemented in Java with an API that enables the
+implementation of such connections; however, RISCTP also provides a text-based
+frontend and a web-based graphical user interface that allow its use as a
+theorem prover on its own. RISCTP provides a backend that translates a proving
+problem into SMT-LIB and solves it by the "black box" application of an external
+SMT solver. Furthermore, RISCTP implements two internal provers for first-order
+logic with equality (based on the proof calculi of MESON (model-elimination,
+subgoal-oriented), and resolution/superposition, respectively) and the
+possibility to inspect successful proofs as well as failed proof attempts. These
+provers also supports reasoning in the theories of integers, arrays/maps,
+tuples, and algebraic datatypes, via a corresponding axiomatization, and/or the
+application of an external SMT solver.
+
+Please send bug reports to the main author of this software:
+
+  Wolfgang Schreiner <Wolfgang.Schreiner@risc.jku.at>
+  https://www.risc.jku.at/home/schreine
+  Research Institute for Symbolic Computation (RISC)
+  Johannes Kepler University, 4040 Linz, Austria
+
+The resolution/superposition prover has been developed by:
+
+  Viktoria Langenreither <viktoria.langenreither@gmail.com>
+
+The Distribution
+================
+The distribution has the following contents:
+
+  README     ... this file
+  COPYING    ... the GNU General Public Licence Version 3
+  CHANGES    ... the version history of the software
+  etc/
+    RISCTP   ... the execution script
+    z3       ... Z3 (GNU Linux/x86-64 executable)
+    cvc5     ... cvc5 (GNU Linux/x86-64 executable)
+    vampire  ... Vampire (GNU Linux/x86-64 executable)
+    exspec   ... ExSpec (GNU Linux/x86-54 exexutable)
+  lib/
+    *.jar    ... the Java-compiled libraries
+  doc/
+    main.pdf ... the manual
+  problems/
+    *.txt    ... sample problem files
+  src/
+    */*.java ... the Java source code
+
+Installation
+============
+First make sure that you have installed the Java Development Kit (see below).
+
+Then copy file etc/RISCTP to a directory in your PATH and adapt in this file
+the variable JAVA to point to the Java executable "java". Adapt LIB to point
+to the directory "lib" of the RISCTP distribution.
+
+You should then be able to execute
+
+  RISCTP -h
+
+Third Party Software That You Have to Install
+=============================================
+RISCTP assumes that the following third party software is installed on your
+computer (if it is not already provided by your GNU/Linux distribution, you have
+to downlad and install it manually).
+
+Java Development Kit (Oracle JDK 21 recommended)
+http://www.oracle.com/technetwork/java/javase/downloads/index.html
+------------------------------------------------------------------
+Go to the "Downloads" section to download the JDK. 
+
+Oracle JDK 21 is recommended. Newer JDK versions will most probably work but
+have not been tested.
+
+Third Party Software That Comes with RISCTP
+===========================================
+RISCTP also uses the the following open source software developed by third
+parties. This software is already included in the distribution, but if you want
+or need, you can download the source code from the denoted locations and compile
+it on your own. Many thanks to the respective developers for making this great
+software freely available!
+
+ANTLR 4.13.1
+http://www.antlr.org
+--------------------
+This is a framework for constructing parsers and lexical analyzers used for 
+processing the RISCTP language.
+
+On a Debian 11 "bullseye" GNU/Linux distribution, just install the package
+"antlr4" by executing (as superuser) the command
+
+  apt-get install antlr4
+  
+Z3 4.13.0: https://github.com/Z3Prover
+--------------------------------------
+To use the SMT mode "z3", Z3 has to be installed (above version has been
+tested, other versions may or may not work).
+
+The RISCTP distribution is bundled with an GNU Linux/x86-64 executable of
+this solver.
+
+cvc5 1.1.2: https://cvc5.github.io/
+-----------------------------------
+To use the SMT mode "cvc5", cvc5 has to be installed (above version has
+been tested, other versions may or may not work).
+
+The RISCTP distribution is bundled with an GNU Linux/x86-64 executable of
+this solver.
+
+Vampire 4.7: https://vprover.github.io/
+-----------------------------------------
+To use the SMT mode "vampire", Vampire has to be installed (above version
+has been tested, other versions may or may not work).
+
+The RISCTP distribution is bundled with an GNU Linux/x86-64 executable of
+this solver.
+
+ExSpec 0.3: https://www.cs.cas.cz/~ratschan/exspec/
+---------------------------------------------------
+To use the SMT mode "exspec", ExSpec has to be installed (above version
+has been tested, other versions may or may not work). Please note that the
+RISCTP support of this solver is still limited and considered experimental.
+
+The RISCTP distribution is bundled with an GNU Linux/x86-64 executable of
+this solver.
+
+------------------------------------------------------------------------------
+End of README.
+------------------------------------------------------------------------------

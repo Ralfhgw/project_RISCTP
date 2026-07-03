@@ -1,0 +1,12 @@
+// problem file "fol.txt"
+type T;
+pred p(x:T);
+pred q(x:T);
+pred r(x:T);
+fun f(x:T):T;
+theorem Theorem ⇔ 
+  ∀a:T,b:T. 
+    (p(a) ∨ q(b)) ∧  
+    (∀x:T. p(x) ⇒ r(x)) ∧
+    (∀x:T. q(x) ⇒ r(f(x))) ⇒
+      (∃x:T. p(x) ∨ q(x)) ∧ (∃x:T. r(x));

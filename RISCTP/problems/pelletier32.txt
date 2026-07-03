@@ -1,0 +1,13 @@
+// Harrison: "Handbook of Practical Logic and Theorem Proving", page 208
+type T;
+pred p(x:T);
+pred q(x:T);
+pred r(x:T);
+pred g(x:T);
+pred h(x:T);
+pred j(x:T);
+theorem T ⇔ 
+  (∀x:T. p(x) ∧ (g(x) ∨ h(x)) ⇒ q(x)) ∧
+  (∀x:T. q(x) ∧ h(x) ⇒ j(x)) ∧
+  (∀x:T. r(x) ⇒ h(x))
+⇒ (∀x:T. p(x) ∧ r(x) ⇒ j(x));
