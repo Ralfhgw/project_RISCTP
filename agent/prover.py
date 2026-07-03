@@ -5,13 +5,11 @@ from checker import check_problem, CheckException
 from risctp import problemstr
 from executor import execute, start, stop
 
+import atexit
 import tempfile, os
 
-RISCTP_PATH='/home/ralf/dci_training/websites/project_RISCTP/RISCTP/etc/RISCTP'
-Z3_PATH='/home/ralf/dci_training/websites/project_RISCTP/RISCTP/etc/z3'
-BROWSER_PATH='/software/bin/firefox'
-
-BROWSER_CMD = [BROWSER_PATH, '-no-remote', '-P', 'RISCTP', 'localhost:9999']
+RISCTP_PATH='../RISCTP/etc/RISCTP'
+Z3_PATH='../RISCTP/etc/z3'
 
 INTERACTIVE_CMD = ['-web', '9999', '1']
 RISCTP_SMT_CMD = [RISCTP_PATH, \
@@ -19,6 +17,18 @@ RISCTP_SMT_CMD = [RISCTP_PATH, \
 RISCTP_MESON_CMD = [RISCTP_PATH, '-method', 'meson']
   
 RISCTP_CMD = RISCTP_SMT_CMD
+INTERACTIVE_URL = 'http://localhost:9999/'
+_interactive_process = None
+_interactive_spec_path = None
+def _cleanup_interactive_session()->None:
+    global _interactive_process, _interactive_spec_path
+    if _interactive_process is not None:
+        stop(_interactive_process)
+        _interactive_process = None
+    if _interactive_spec_path and os.path.exists(_interactive_spec_path):
+        os.remove(_interactive_spec_path)
+    _interactive_spec_path = None
+atexit.register(_cleanup_interactive_session)
 
 def prove(fol_text:str,interactive:bool=False)->tuple[bool,str]:
     """
@@ -27,8 +37,9 @@ def prove(fol_text:str,interactive:bool=False)->tuple[bool,str]:
     (depending on the second parameter). In the automatic mode, the
     function returns 'True' if the proof could be performed and 'False' otherwise, 
     in both cases together with the output produced by the prover.
-    In the interactive mode, the result is (False,'').
+    In the interactive mode, the result announces the local RISCTP web URL.
     """
+    global _interactive_process, _interactive_spec_path
     result:str = ''
     try:
         tokens: list(str) = scan(fol_text)
@@ -41,13 +52,14 @@ def prove(fol_text:str,interactive:bool=False)->tuple[bool,str]:
             risctp_cmd += INTERACTIVE_CMD
         risctp_cmd += [ spec_path ]
         if interactive:
+            _cleanup_interactive_session()
             risctp_proc = start(risctp_cmd)
             if risctp_proc == None:
-                return -1, 'could not start RISCTP process'
-            print
-            code,stdout = execute(BROWSER_CMD)
-            stop(risctp_proc)
-            return -1, 'proof session terminated (successfully or unsuccessfully)'
+                os.remove(spec_path)
+                return False, 'could not start RISCTP process'
+            _interactive_process = risctp_proc
+            _interactive_spec_path = spec_path
+            return True, f'interactive RISCTP session started; open {INTERACTIVE_URL} manually'
         else:
             code, stdout = execute(risctp_cmd)
             os.remove(spec_path)
